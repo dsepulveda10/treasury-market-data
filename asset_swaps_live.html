@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asset Swaps · Section 02</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --uv:        #2a1051;
+  --uv-card:   #3d1878;
+  --uv-border: #5a2ca0;
+  --purple:    #820AD1;
+  --lp:        #AA68FF;
+  --lp-dim:    #7a4ccc;
+  --off-white: #F4F4F4;
+  --muted:     #9f7fcc;
+  --dim:       #6a3fa0;
+  --green:     #27c97a;
+  --red:       #f05050;
+  --amber:     #f0a050;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--uv);color:var(--off-white);font-family:'Outfit',sans-serif;font-size:14px;min-height:100vh}
+
+/* ── Header ── */
+header{display:flex;align-items:center;gap:13px;padding:13px 26px;
+  background:rgba(42,16,81,.88);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--uv-border);position:sticky;top:0;z-index:100}
+.nu{font-weight:800;font-size:14px;color:var(--off-white);background:var(--purple);
+    padding:4px 10px;border-radius:6px;text-transform:lowercase;letter-spacing:-.5px}
+header h1{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.hline{width:1px;height:18px;background:var(--uv-border)}
+.dept{font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.3px}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:14px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+#ts{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.cache-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.badge-live{color:var(--green);background:rgba(39,201,122,.08);border:1px solid rgba(39,201,122,.2)}
+.badge-cached{color:var(--muted);background:rgba(90,44,160,.2);border:1px solid var(--uv-border)}
+.refresh-btn{background:transparent;border:1px solid var(--uv-border);color:var(--muted);
+  padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'Outfit',sans-serif;transition:all .2s}
+.refresh-btn:hover{border-color:var(--lp);color:var(--lp)}
+
+/* ── Layout ── */
+main{padding:22px 26px 40px;max-width:1440px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:6px}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.2px;color:var(--lp);
+  background:rgba(170,104,255,.1);border:1px solid rgba(170,104,255,.25);padding:2px 9px;border-radius:4px;text-transform:uppercase}
+.sec-head h2{font-size:15px;font-weight:700;letter-spacing:-.2px}
+.divider{height:1px;background:var(--uv-border);margin-bottom:20px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.sub-section{margin-bottom:28px}
+.sub-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
+  letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;padding-left:2px}
+
+/* ── Loading / error states ── */
+.state-box{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;padding:56px 40px;border:1px solid var(--uv-border);border-radius:12px;
+  background:rgba(61,24,120,.3);text-align:center}
+.spinner{width:34px;height:34px;border:3px solid var(--uv-border);
+  border-top-color:var(--lp);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.state-title{font-size:15px;font-weight:600}
+.state-sub{font-size:11px;color:var(--muted)}
+.error-box{border-color:rgba(240,80,80,.25)}
+.error-detail{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);
+  background:rgba(240,80,80,.07);padding:8px 12px;border-radius:6px;
+  max-width:500px;word-break:break-all;white-space:pre-wrap;text-align:left}
+.retry-btn{background:rgba(170,104,255,.1);border:1px solid var(--lp-dim);color:var(--lp);
+  padding:7px 20px;border-radius:8px;cursor:pointer;font-size:13px;
+  font-family:'Outfit',sans-serif;font-weight:600;transition:all .2s}
+.retry-btn:hover{background:rgba(170,104,255,.2)}
+
+/* ── Date bar ── */
+.date-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--uv-card);border:1px solid var(--uv-border);
+  border-radius:10px;padding:10px 16px;margin-bottom:14px}
+.date-bar label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap}
+.diwrap{position:relative;display:flex;align-items:center}
+.diwrap svg{position:absolute;left:10px;pointer-events:none;color:var(--lp);width:14px;height:14px}
+#date-picker{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+  background:rgba(170,104,255,.08);border:1px solid var(--uv-border);color:var(--off-white);
+  padding:6px 10px 6px 32px;border-radius:8px;cursor:pointer;outline:none;
+  transition:border-color .2s;-webkit-appearance:none;appearance:none}
+#date-picker::-webkit-calendar-picker-indicator{filter:invert(70%) sepia(40%) saturate(500%) hue-rotate(230deg);cursor:pointer;opacity:.7}
+#date-picker:focus,#date-picker:hover{border-color:var(--lp)}
+.date-nav{display:flex;gap:4px}
+.dnav{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  background:transparent;border:1px solid var(--uv-border);color:var(--muted);
+  padding:5px 10px;border-radius:7px;cursor:pointer;transition:all .15s;line-height:1}
+.dnav:hover{border-color:var(--lp);color:var(--lp)}
+.dnav:disabled{opacity:.3;cursor:default}
+.date-badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-left:auto}
+.date-badge span{color:var(--lp);font-weight:600}
+.date-warn{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--red);
+  background:rgba(240,80,80,.08);border:1px solid rgba(240,80,80,.2);padding:2px 8px;border-radius:4px}
+
+/* ── Cards ── */
+.card{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;
+  padding:18px 18px 14px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.card::after{content:'';position:absolute;top:-40px;left:-40px;width:160px;height:160px;border-radius:50%;pointer-events:none}
+.card.c-ibr::before{background:linear-gradient(90deg,var(--purple) 0%,transparent 65%)}
+.card.c-ibr::after{background:radial-gradient(circle,rgba(130,10,209,.18) 0%,transparent 70%)}
+.card.c-asw::before{background:linear-gradient(90deg,var(--amber) 0%,transparent 65%)}
+.card.c-asw::after{background:radial-gradient(circle,rgba(240,160,80,.14) 0%,transparent 70%)}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);margin-bottom:2px}
+.card-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);margin-bottom:12px;line-height:1.5}
+
+/* ── Rate rows ── */
+.rrow{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:8px;
+  padding:5px 0;border-bottom:1px solid rgba(90,44,160,.35)}
+.rrow:last-child{border-bottom:none}
+.ttag{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+  color:var(--lp);background:rgba(170,104,255,.1);padding:2px 5px;border-radius:4px;text-align:center}
+.rmid{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;line-height:1.2}
+.rspread{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px}
+.rdelta{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  padding:2px 6px;border-radius:4px;white-space:nowrap}
+.dpos{color:var(--green);background:rgba(39,201,122,.1)}
+.dneg{color:var(--red);background:rgba(240,80,80,.1)}
+.dzero{color:var(--muted)}
+.asw-pos{color:var(--green)}
+.asw-neg{color:var(--amber)}
+
+/* ── Chart panels ── */
+.panel{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;
+  padding:18px 18px 14px;position:relative;overflow:hidden}
+.panel::after{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(130,10,209,.1) 0%,transparent 70%);pointer-events:none}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:8px;flex-wrap:wrap}
+.ptitle{font-size:13px;font-weight:700;letter-spacing:-.15px}
+.psub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px}
+.controls{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.pills{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.pill{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:3px 9px;
+  border-radius:20px;cursor:pointer;border:1px solid var(--uv-border);background:transparent;
+  color:var(--muted);transition:all .15s;letter-spacing:.3px}
+.pill:hover{border-color:var(--lp-dim);color:var(--lp)}
+.pill.on{border-color:var(--lp);background:rgba(170,104,255,.12);color:var(--lp)}
+.pill.on-amber{border-color:var(--amber);background:rgba(240,160,80,.1);color:var(--amber)}
+.range-pills{display:flex;gap:4px}
+.rpill{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:2px 7px;
+  border-radius:20px;cursor:pointer;border:1px solid var(--uv-border);background:transparent;
+  color:var(--dim);transition:all .15s}
+.rpill:hover{border-color:var(--lp-dim);color:var(--muted)}
+.rpill.on{border-color:rgba(170,104,255,.5);background:rgba(170,104,255,.07);color:var(--muted)}
+.cwrap{position:relative;height:240px}
+.coverlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(42,16,81,.85);border-radius:8px;z-index:10}
+.mspin{width:20px;height:20px;border:2px solid var(--uv-border);border-top-color:var(--lp);
+  border-radius:50%;animation:spin .7s linear infinite}
+
+footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
+  text-align:center;padding:20px 26px 14px;border-top:1px solid var(--uv-border);margin-top:8px}
+.hidden{display:none!important}
+@media(max-width:820px){main{padding:12px}.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nu">nu</div>
+  <h1>Treasury's Market Data</h1>
+  <div class="hline"></div>
+  <span class="dept">Treasury · Colombia</span>
+  <div class="hmeta">
+    <div class="live-dot"></div>
+    <span id="ts">—</span>
+    <span id="cache-badge" class="cache-badge hidden"></span>
+    <button class="refresh-btn" onclick="loadData(true)">↻ Refresh</button>
+  </div>
+</header>
+
+<main>
+  <div class="sec-head">
+    <span class="sec-num">SECTION 02</span>
+    <h2>Asset Swaps</h2>
+  </div>
+  <div class="divider"></div>
+
+  <!-- ── Loading state ── -->
+  <div id="state-loading" class="state-box">
+    <div class="spinner"></div>
+    <span class="state-title">Loading Market Data</span>
+    <p class="state-sub" id="loading-msg">Connecting to Databricks…</p>
+  </div>
+
+  <!-- ── Error state ── -->
+  <div id="state-error" class="state-box error-box hidden">
+    <span style="font-size:26px">⚠️</span>
+    <span class="state-title">Could not load data</span>
+    <pre id="error-detail" class="error-detail"></pre>
+    <button class="retry-btn" onclick="loadData(true)">↻ Retry</button>
+  </div>
+
+  <!-- ── Dashboard (hidden until data loads) ── -->
+  <div id="dashboard" class="hidden">
+
+    <!-- 01 + 02: Rate runs -->
+    <div class="sub-section">
+      <div class="sub-label">01 · 02 &nbsp;—&nbsp; Rate Runs</div>
+
+      <div class="date-bar">
+        <label>IBR Date</label>
+        <div class="diwrap">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="1" y="2.5" width="14" height="12" rx="2"/>
+            <path d="M1 6.5h14M5 1v3M11 1v3"/>
+          </svg>
+          <input type="date" id="date-picker">
+        </div>
+        <div class="date-nav">
+          <button class="dnav" id="btn-prev">◀</button>
+          <button class="dnav" id="btn-next">▶</button>
+          <button class="dnav" id="btn-latest">Latest</button>
+        </div>
+        <div id="date-warn" class="date-warn hidden">No data for this date</div>
+        <div class="date-badge">Showing: <span id="showing-date">—</span></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card c-ibr">
+          <div class="card-title">📊 Swap IBR Rates</div>
+          <div class="card-sub" id="ibr-sub">—</div>
+          <div id="list-ibr"></div>
+        </div>
+        <div class="card c-asw">
+          <div class="card-title">⚖️ Theoretical Asset Swaps · IBR ON + Spread</div>
+          <div class="card-sub" id="asw-sub">—</div>
+          <div id="list-asw"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 + 04: Historical charts -->
+    <div class="sub-section">
+      <div class="sub-label">03 · 04 &nbsp;—&nbsp; Historical Charts</div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="ptitle">Historical Swap IBR Rates</div>
+              <div class="psub">Mid · Daily/360 basis</div>
+            </div>
+            <div class="controls">
+              <div class="pills" id="pills-ibr"></div>
+              <div class="range-pills" id="range-ibr"></div>
+            </div>
+          </div>
+          <div class="cwrap">
+            <div class="coverlay hidden" id="spin-ibr"><div class="mspin"></div></div>
+            <canvas id="c-ibr"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="ptitle">Historical Asset Swaps</div>
+              <div class="psub">bps · Sov EA/365 − IBR swap mid (daily/360 → EA/365)</div>
+            </div>
+            <div class="controls">
+              <div class="pills" id="pills-asw"></div>
+              <div class="range-pills" id="range-asw"></div>
+            </div>
+          </div>
+          <div class="cwrap">
+            <div class="coverlay hidden" id="spin-asw"><div class="mspin"></div></div>
+            <canvas id="c-asw"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /dashboard -->
+</main>
+
+<footer>Bloomberg · SFC Sovereign Curve · Nu Colombia Treasury ALM · @col_treasury_alm</footer>
+
+<script>
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║  Step 1: paste your Apps Script deployment URL here                     ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/nubank.com.br/s/AKfycbxhY3mnMnqPDDTK6E7gs_cqFyudc6D7yARIWjKQ5irfq2XCK2eD2bC4S0ewvWTBy0t1/exec';
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const IBR_TENORS = ['1M','3M','6M','9M','1Y','1.5Y','2Y','3Y','4Y','5Y'];
+const ASW_TENORS = ['6M','1Y','1.5Y','2Y','3Y','4Y','5Y'];
+const RANGES     = [{label:'3M',days:90},{label:'6M',days:180},{label:'1Y',days:365},{label:'ALL',days:null}];
+
+const ID_TO_TENOR = {
+  'CLSWIBA BGN Curncy':'1M',  'CLSWIBC BGN Curncy':'3M',
+  'CLSWIBF BGN Curncy':'6M',  'CLSWIBI BGN Curncy':'9M',
+  'CLSWIB1 BGN Curncy':'1Y',  'CLSWIB1F BGN Curncy':'1.5Y',
+  'CLSWIB2 BGN Curncy':'2Y',  'CLSWIB3 BGN Curncy':'3Y',
+  'CLSWIB4 BGN Curncy':'4Y',  'CLSWIB5 BGN Curncy':'5Y',
+};
+const TENOR_TO_NODE = {'6M':180,'1Y':360,'1.5Y':540,'2Y':720,'3Y':1080,'4Y':1440,'5Y':1800};
+
+// ── App state ─────────────────────────────────────────────────────────────────
+let D            = null;
+let selectedDate = null;
+let activeIBR    = '6M',  activeASW    = '2Y';
+let activeRngIBR = '1Y',  activeRngASW = '1Y';
+let cIBR = null, cASW = null;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const $    = id => document.getElementById(id);
+const show = id => $(id).classList.remove('hidden');
+const hide = id => $(id).classList.add('hidden');
+
+function dClass(d){ return d>0.005?'dpos':d<-0.005?'dneg':'dzero'; }
+function dStr(d,unit=''){
+  if(Math.abs(d)<0.005) return '±0'+unit;
+  return (d>0?'+':'')+d.toFixed(2)+unit;
+}
+function toEA365(rSwapPct){
+  // Convert IBR swap rate (daily/ACT360) → EA/365
+  return (Math.pow(1 + rSwapPct/100/360, 365) - 1) * 100;
+}
+function prevD(d){ const i=D.availDates.indexOf(d); return i>0?D.availDates[i-1]:null; }
+function nextD(d){ const i=D.availDates.indexOf(d); return i<D.availDates.length-1?D.availDates[i+1]:null; }
+function nearestAvail(ds){
+  if(D.availSet.has(ds)) return ds;
+  const all=D.availDates; let lo=0,hi=all.length-1;
+  while(lo<=hi){const m=Math.floor((lo+hi)/2); all[m]<ds?lo=m+1:hi=m-1;}
+  return hi>=0?all[hi]:all[0];
+}
+function nearestSovDate(ibrDate){
+  // latest sovereign date ≤ ibrDate
+  let best=null;
+  for(const d of D.sovDates){ if(d<=ibrDate) best=d; else break; }
+  return best;
+}
+function sliceBy(arr, rangeLbl){
+  const days=RANGES.find(r=>r.label===rangeLbl)?.days;
+  if(!days) return arr;
+  const cutoff=new Date(D.latestIbrDate);
+  cutoff.setDate(cutoff.getDate()-days);
+  return arr.filter(r=>r.date>=cutoff.toISOString().slice(0,10));
+}
+function updateTs(){
+  const n=new Date();
+  $('ts').textContent=n.toLocaleDateString('en-CO',{timeZone:'America/Bogota'})+' · '+
+    n.toLocaleTimeString('en-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit'})+' COT';
+}
+
+// ── Data fetch ────────────────────────────────────────────────────────────────
+async function loadData(forceRefresh=false){
+  hide('state-error');
+  hide('dashboard');
+  show('state-loading');
+  $('loading-msg').textContent='Connecting to Databricks…';
+
+  try {
+    const suffix = forceRefresh ? '&nocache='+Date.now() : '';
+
+    $('loading-msg').textContent='Fetching IBR swap rates…';
+    const [ibrRes, sovRes] = await Promise.all([
+      fetch(APPS_SCRIPT_URL+'?dataset=ibr_swaps'+suffix),
+      fetch(APPS_SCRIPT_URL+'?dataset=sovereign_curve'+suffix),
+    ]);
+
+    $('loading-msg').textContent='Transforming data…';
+    const ibrJson = await ibrRes.json();
+    const sovJson = await sovRes.json();
+
+    if(ibrJson.status!=='ok') throw new Error('IBR: '+ibrJson.message);
+    if(sovJson.status!=='ok') throw new Error('SOV: '+sovJson.message);
+
+    D = buildD(ibrJson.data, sovJson.data);
+
+    // Cache badge
+    const badge=$('cache-badge');
+    badge.className='cache-badge '+(forceRefresh?'badge-live':'badge-cached');
+    badge.textContent=forceRefresh?'⬤ live':'◌ cached';
+    show('cache-badge');
+
+    hide('state-loading');
+    show('dashboard');
+
+    buildPills();
+    setDate(D.latestIbrDate);
+    renderIBR(activeIBR);
+    renderASW(activeASW);
+
+  } catch(err){
+    console.error(err);
+    hide('state-loading');
+    $('error-detail').textContent=err.message;
+    show('state-error');
+  }
+}
+
+// ── Build D object from raw SQL rows ─────────────────────────────────────────
+// Replicates the Python transform that used to produce the embedded JSON
+function buildD(ibrRows, sovRows){
+
+  // ── 1. IBR: group by date → tenor ──
+  const ibrByDate={};
+  const allIbrDates=new Set();
+
+  ibrRows.forEach(r=>{
+    const d=r.date.slice(0,10);
+    const tenor=ID_TO_TENOR[r.identifier];
+    if(!tenor) return;
+    allIbrDates.add(d);
+    if(!ibrByDate[d]) ibrByDate[d]={};
+    ibrByDate[d][tenor]={b:r.bid, m:r.mid, a:r.ask};
+  });
+
+  const availDates=Array.from(allIbrDates).sort();
+  const latestIbrDate=availDates[availDates.length-1];
+  const prevIbrDate  =availDates[availDates.length-2];
+
+  // ── 2. Sovereign curve: group by date → node ──
+  const sovByDate={};
+  const sovDateSet=new Set();
+
+  sovRows.forEach(r=>{
+    const d=r.date.slice(0,10);
+    sovDateSet.add(d);
+    if(!sovByDate[d]) sovByDate[d]={};
+    sovByDate[d][r.node]=r.yield_pct;
+  });
+
+  const sovDates=Array.from(sovDateSet).sort();
+
+  // Helper: nearest sov date ≤ ibrDate
+  function nearestSov(ibrDate){
+    let best=null;
+    for(const d of sovDates){ if(d<=ibrDate) best=d; else break; }
+    return best;
+  }
+
+  // ── 3. Build histIBR ──
+  const histIBR={};
+  IBR_TENORS.forEach(t=>{ histIBR[t]=[]; });
+  availDates.forEach(d=>{
+    IBR_TENORS.forEach(t=>{
+      const r=ibrByDate[d]?.[t];
+      if(!r) return;
+      histIBR[t].push({date:d, b:r.b, m:r.m, a:r.a});
+    });
+  });
+
+  // ── 4. Build histASW ──
+  const histASW={};
+  ASW_TENORS.forEach(t=>{ histASW[t]=[]; });
+
+  availDates.forEach(d=>{
+    const sovD=nearestSov(d);
+    if(!sovD) return;
+    const sovData=sovByDate[sovD];
+    const ibrData=ibrByDate[d]||{};
+
+    ASW_TENORS.forEach(t=>{
+      const node=TENOR_TO_NODE[t];
+      const sovY=sovData[node];
+      const ibrM=ibrData[t]?.m;
+      if(sovY==null||ibrM==null) return;
+      const ibrEA=toEA365(ibrM);
+      const asw_bps=Math.round((sovY-ibrEA)*100*10)/10; // 1dp
+      histASW[t].push({date:d, asw:asw_bps});
+    });
+  });
+
+  // ── 5. Build reverse index byDate ──
+  const byDate={};
+  IBR_TENORS.forEach(t=>{
+    histIBR[t].forEach(e=>{
+      if(!byDate[e.date]) byDate[e.date]={};
+      byDate[e.date][t]=e;
+    });
+  });
+  const aswByDate={};
+  ASW_TENORS.forEach(t=>{
+    histASW[t].forEach(e=>{
+      if(!aswByDate[e.date]) aswByDate[e.date]={};
+      aswByDate[e.date][t]=e.asw;
+    });
+  });
+
+  // ── 6. Snapshot dates for subtitle ──
+  const sovDateForSnap=nearestSov(latestIbrDate)||'—';
+
+  return {
+    latestIbrDate, prevIbrDate,
+    availDates, availSet:new Set(availDates),
+    sovDates, sovByDate, ibrByDate,
+    byDate, aswByDate,
+    histIBR, histASW,
+    sovDateForSnap,
+  };
+}
+
+// ── Render rate-run cards ─────────────────────────────────────────────────────
+function renderCards(date){
+  const pd      = prevD(date);
+  const ibr     = D.byDate[date]||{};
+  const ibrP    = pd?(D.byDate[pd]||{}):{};
+  const aswDay  = D.aswByDate[date]||{};
+  const aswDayP = pd?(D.aswByDate[pd]||{}):{};
+
+  $('ibr-sub').textContent=date+'  ·  Δ vs '+(pd||'—');
+
+  // IBR rows
+  let ibrHTML='';
+  IBR_TENORS.forEach(t=>{
+    const c=ibr[t],p=ibrP[t]; if(!c) return;
+    const delta=p?c.m-p.m:0;
+    ibrHTML+=`<div class="rrow">
+      <span class="ttag">${t}</span>
+      <div><div class="rmid">${c.m.toFixed(2)}%</div>
+      <div class="rspread">Bid: ${c.b.toFixed(2)} | Ask: ${c.a.toFixed(2)}</div></div>
+      <span class="rdelta ${dClass(delta)}">${dStr(delta,'%')}</span>
+    </div>`;
+  });
+  $('list-ibr').innerHTML=ibrHTML;
+
+  // ASW subtitle
+  const sovD=nearestSovDate(date);
+  $('asw-sub').innerHTML=
+    `Sov Curve: <b>${sovD||'—'}</b> &nbsp;·&nbsp; Swap IBR: <b>${date}</b><br>`+
+    `<span style="color:var(--dim)">r_EA = (1 + r_swap/360)^365 − 1</span>`;
+
+  // ASW rows
+  let aswHTML='';
+  ASW_TENORS.forEach(t=>{
+    const v=aswDay[t]; const vP=aswDayP[t];
+    if(v==null) return;
+    const delta=vP!=null?v-vP:0;
+    const cls=v>=0?'asw-pos':'asw-neg';
+    aswHTML+=`<div class="rrow">
+      <span class="ttag">${t}</span>
+      <div><div class="rmid ${cls}">IBR ON ${v>=0?'+':''}${v.toFixed(1)} bps</div></div>
+      <span class="rdelta ${dClass(delta)}">${dStr(delta,' bps')}</span>
+    </div>`;
+  });
+  $('list-asw').innerHTML=aswHTML||
+    '<div style="color:var(--muted);font-size:11px;padding:10px 0">No sovereign data paired to this date</div>';
+}
+
+// ── Date selector ─────────────────────────────────────────────────────────────
+function setDate(ds, skipPicker){
+  const resolved=nearestAvail(ds);
+  D.availSet.has(ds)?hide('date-warn'):show('date-warn');
+  selectedDate=resolved;
+  $('showing-date').textContent=resolved;
+  if(!skipPicker) $('date-picker').value=resolved;
+  $('btn-prev').disabled   = !prevD(resolved);
+  $('btn-next').disabled   = !nextD(resolved);
+  $('btn-latest').disabled = resolved===D.latestIbrDate;
+  $('date-picker').min=D.availDates[0];
+  $('date-picker').max=D.latestIbrDate;
+  renderCards(resolved);
+}
+$('date-picker').addEventListener('change',e=>setDate(e.target.value,true));
+$('btn-prev').onclick   =()=>{const d=prevD(selectedDate);if(d)setDate(d);};
+$('btn-next').onclick   =()=>{const d=nextD(selectedDate);if(d)setDate(d);};
+$('btn-latest').onclick =()=>setDate(D.latestIbrDate);
+
+// ── Chart options ─────────────────────────────────────────────────────────────
+const BASE_OPT=(cbLabel)=>({
+  responsive:true, maintainAspectRatio:false, animation:{duration:300},
+  interaction:{mode:'index',intersect:false},
+  plugins:{
+    legend:{display:false},
+    tooltip:{backgroundColor:'#3d1878',borderColor:'#5a2ca0',borderWidth:1,
+      titleColor:'#9f7fcc',bodyColor:'#F4F4F4',
+      titleFont:{family:"'JetBrains Mono',monospace",size:10},
+      bodyFont:{family:"'JetBrains Mono',monospace",size:12},
+      callbacks:{label:cbLabel}}
+  },
+  scales:{
+    x:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:9},maxTicksLimit:10,maxRotation:0},
+       grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}},
+    y:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:9}},
+       grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}}
+  }
+});
+
+const IBR_OPT=BASE_OPT(ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}%`);
+IBR_OPT.scales.y.ticks.callback=v=>v.toFixed(1)+'%';
+const ASW_OPT=BASE_OPT(ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} bps`);
+ASW_OPT.scales.y.ticks.callback=v=>v.toFixed(0)+' bp';
+ASW_OPT.scales.y.grid.color=ctx=>ctx.tick.value===0?'rgba(240,160,80,.5)':'rgba(90,44,160,.3)';
+
+function renderIBR(tenor){
+  const hist=sliceBy(D.histIBR[tenor]||[], activeRngIBR);
+  if(cIBR) cIBR.destroy();
+  cIBR=new Chart($('c-ibr').getContext('2d'),{
+    type:'line',
+    data:{labels:hist.map(r=>r.date),datasets:[{
+      label:`${tenor} IBR Swap`,data:hist.map(r=>r.m),
+      borderColor:'#820AD1',backgroundColor:'rgba(130,10,209,.12)',
+      borderWidth:2,pointRadius:0,tension:.3,fill:true}]},
+    options:IBR_OPT
+  });
+}
+function renderASW(tenor){
+  const hist=sliceBy(D.histASW[tenor]||[], activeRngASW);
+  if(cASW) cASW.destroy();
+  cASW=new Chart($('c-asw').getContext('2d'),{
+    type:'line',
+    data:{labels:hist.map(r=>r.date),datasets:[{
+      label:`${tenor} Asset Swap`,data:hist.map(r=>r.asw),
+      borderColor:'#f0a050',backgroundColor:'rgba(240,160,80,.08)',
+      borderWidth:2,pointRadius:0,tension:.3,fill:true}]},
+    options:ASW_OPT
+  });
+}
+
+// ── Pills ─────────────────────────────────────────────────────────────────────
+function buildPills(){
+  $('pills-ibr').innerHTML='';
+  IBR_TENORS.forEach(t=>{
+    const b=document.createElement('button');
+    b.className='pill'+(t===activeIBR?' on':'');
+    b.textContent=t;
+    b.onclick=()=>{
+      activeIBR=t;
+      $('pills-ibr').querySelectorAll('.pill').forEach(x=>x.className='pill'+(x.textContent===t?' on':''));
+      show('spin-ibr'); setTimeout(()=>{ renderIBR(t); hide('spin-ibr'); },60);
+    };
+    $('pills-ibr').appendChild(b);
+  });
+
+  $('pills-asw').innerHTML='';
+  ASW_TENORS.forEach(t=>{
+    const b=document.createElement('button');
+    b.className='pill'+(t===activeASW?' on on-amber':'');
+    b.textContent=t;
+    b.onclick=()=>{
+      activeASW=t;
+      $('pills-asw').querySelectorAll('.pill').forEach(x=>x.className='pill'+(x.textContent===t?' on on-amber':''));
+      show('spin-asw'); setTimeout(()=>{ renderASW(t); hide('spin-asw'); },60);
+    };
+    $('pills-asw').appendChild(b);
+  });
+
+  $('range-ibr').innerHTML='';
+  RANGES.forEach(r=>{
+    const b=document.createElement('button');
+    b.className='rpill'+(r.label===activeRngIBR?' on':'');
+    b.textContent=r.label;
+    b.onclick=()=>{
+      activeRngIBR=r.label;
+      $('range-ibr').querySelectorAll('.rpill').forEach(x=>x.classList.toggle('on',x.textContent===r.label));
+      show('spin-ibr'); setTimeout(()=>{ renderIBR(activeIBR); hide('spin-ibr'); },60);
+    };
+    $('range-ibr').appendChild(b);
+  });
+
+  $('range-asw').innerHTML='';
+  RANGES.forEach(r=>{
+    const b=document.createElement('button');
+    b.className='rpill'+(r.label===activeRngASW?' on':'');
+    b.textContent=r.label;
+    b.onclick=()=>{
+      activeRngASW=r.label;
+      $('range-asw').querySelectorAll('.rpill').forEach(x=>x.classList.toggle('on',x.textContent===r.label));
+      show('spin-asw'); setTimeout(()=>{ renderASW(activeASW); hide('spin-asw'); },60);
+    };
+    $('range-asw').appendChild(b);
+  });
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+Chart.defaults.color='#7a4ccc';
+Chart.defaults.borderColor='rgba(90,44,160,.4)';
+updateTs();
+loadData();
+</script>
+</body>
+</html>
