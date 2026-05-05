@@ -23,7 +23,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--uv);color:var(--off-white);font-family:'Outfit',sans-serif;font-size:14px;min-height:100vh}
-
+ 
 /* ── Header ── */
 header{display:flex;align-items:center;gap:13px;padding:13px 26px;
   background:rgba(42,16,81,.88);backdrop-filter:blur(12px);
@@ -44,7 +44,7 @@ header h1{font-size:16px;font-weight:700;letter-spacing:-.3px}
 .refresh-btn{background:transparent;border:1px solid var(--uv-border);color:var(--muted);
   padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'Outfit',sans-serif;transition:all .2s}
 .refresh-btn:hover{border-color:var(--lp);color:var(--lp)}
-
+ 
 /* ── Layout ── */
 main{padding:22px 26px 40px;max-width:1440px}
 .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:6px}
@@ -56,7 +56,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .sub-section{margin-bottom:28px}
 .sub-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
   letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;padding-left:2px}
-
+ 
 /* ── Loading / error states ── */
 .state-box{display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:12px;padding:56px 40px;border:1px solid var(--uv-border);border-radius:12px;
@@ -74,7 +74,7 @@ main{padding:22px 26px 40px;max-width:1440px}
   padding:7px 20px;border-radius:8px;cursor:pointer;font-size:13px;
   font-family:'Outfit',sans-serif;font-weight:600;transition:all .2s}
 .retry-btn:hover{background:rgba(170,104,255,.2)}
-
+ 
 /* ── Date bar ── */
 .date-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   background:var(--uv-card);border:1px solid var(--uv-border);
@@ -99,7 +99,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .date-badge span{color:var(--lp);font-weight:600}
 .date-warn{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--red);
   background:rgba(240,80,80,.08);border:1px solid rgba(240,80,80,.2);padding:2px 8px;border-radius:4px}
-
+ 
 /* ── Cards ── */
 .card{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;
   padding:18px 18px 14px;position:relative;overflow:hidden}
@@ -111,7 +111,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .card.c-asw::after{background:radial-gradient(circle,rgba(240,160,80,.14) 0%,transparent 70%)}
 .card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);margin-bottom:2px}
 .card-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);margin-bottom:12px;line-height:1.5}
-
+ 
 /* ── Rate rows ── */
 .rrow{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:8px;
   padding:5px 0;border-bottom:1px solid rgba(90,44,160,.35)}
@@ -127,7 +127,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .dzero{color:var(--muted)}
 .asw-pos{color:var(--green)}
 .asw-neg{color:var(--amber)}
-
+ 
 /* ── Chart panels ── */
 .panel{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;
   padding:18px 18px 14px;position:relative;overflow:hidden}
@@ -155,7 +155,7 @@ main{padding:22px 26px 40px;max-width:1440px}
   background:rgba(42,16,81,.85);border-radius:8px;z-index:10}
 .mspin{width:20px;height:20px;border:2px solid var(--uv-border);border-top-color:var(--lp);
   border-radius:50%;animation:spin .7s linear infinite}
-
+ 
 footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
   text-align:center;padding:20px 26px 14px;border-top:1px solid var(--uv-border);margin-top:8px}
 .hidden{display:none!important}
@@ -163,7 +163,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
 </style>
 </head>
 <body>
-
+ 
 <header>
   <div class="nu">nu</div>
   <h1>Treasury's Market Data</h1>
@@ -176,21 +176,21 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
     <button class="refresh-btn" onclick="loadData(true)">↻ Refresh</button>
   </div>
 </header>
-
+ 
 <main>
   <div class="sec-head">
     <span class="sec-num">SECTION 02</span>
-    <h2>Asset Swaps</h2>
+    <h2>Theoretical Asset Swaps</h2>
   </div>
   <div class="divider"></div>
-
+ 
   <!-- ── Loading state ── -->
   <div id="state-loading" class="state-box">
     <div class="spinner"></div>
     <span class="state-title">Loading Market Data</span>
     <p class="state-sub" id="loading-msg">Connecting to Databricks…</p>
   </div>
-
+ 
   <!-- ── Error state ── -->
   <div id="state-error" class="state-box error-box hidden">
     <span style="font-size:26px">⚠️</span>
@@ -198,14 +198,14 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
     <pre id="error-detail" class="error-detail"></pre>
     <button class="retry-btn" onclick="loadData(true)">↻ Retry</button>
   </div>
-
+ 
   <!-- ── Dashboard (hidden until data loads) ── -->
   <div id="dashboard" class="hidden">
-
+ 
     <!-- 01 + 02: Rate runs -->
     <div class="sub-section">
       <div class="sub-label">01 · 02 &nbsp;—&nbsp; Rate Runs</div>
-
+ 
       <div class="date-bar">
         <label>IBR Date</label>
         <div class="diwrap">
@@ -223,7 +223,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         <div id="date-warn" class="date-warn hidden">No data for this date</div>
         <div class="date-badge">Showing: <span id="showing-date">—</span></div>
       </div>
-
+ 
       <div class="two-col">
         <div class="card c-ibr">
           <div class="card-title">📊 Swap IBR Rates</div>
@@ -237,11 +237,11 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         </div>
       </div>
     </div>
-
+ 
     <!-- 03 + 04: Historical charts -->
     <div class="sub-section">
       <div class="sub-label">03 · 04 &nbsp;—&nbsp; Historical Charts</div>
-
+ 
       <div class="two-col">
         <div class="panel">
           <div class="panel-head">
@@ -259,7 +259,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             <canvas id="c-ibr"></canvas>
           </div>
         </div>
-
+ 
         <div class="panel">
           <div class="panel-head">
             <div>
@@ -278,23 +278,23 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         </div>
       </div>
     </div>
-
+ 
   </div><!-- /dashboard -->
 </main>
-
+ 
 <footer>Bloomberg · SFC Sovereign Curve · Nu Colombia Treasury ALM · @col_treasury_alm</footer>
-
+ 
 <script>
 // ╔══════════════════════════════════════════════════════════════════════════╗
 // ║  Step 1: paste your Apps Script deployment URL here                     ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
-const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/nubank.com.br/s/AKfycbxhY3mnMnqPDDTK6E7gs_cqFyudc6D7yARIWjKQ5irfq2XCK2eD2bC4S0ewvWTBy0t1/exec';
-
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxhY3mnMnqPDDTK6E7gs_cqFyudc6D7yARIWjKQ5irfq2XCK2eD2bC4S0ewvWTBy0t1/exec';
+ 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const IBR_TENORS = ['1M','3M','6M','9M','1Y','1.5Y','2Y','3Y','4Y','5Y'];
 const ASW_TENORS = ['6M','1Y','1.5Y','2Y','3Y','4Y','5Y'];
 const RANGES     = [{label:'3M',days:90},{label:'6M',days:180},{label:'1Y',days:365},{label:'ALL',days:null}];
-
+ 
 const ID_TO_TENOR = {
   'CLSWIBA BGN Curncy':'1M',  'CLSWIBC BGN Curncy':'3M',
   'CLSWIBF BGN Curncy':'6M',  'CLSWIBI BGN Curncy':'9M',
@@ -303,19 +303,19 @@ const ID_TO_TENOR = {
   'CLSWIB4 BGN Curncy':'4Y',  'CLSWIB5 BGN Curncy':'5Y',
 };
 const TENOR_TO_NODE = {'6M':180,'1Y':360,'1.5Y':540,'2Y':720,'3Y':1080,'4Y':1440,'5Y':1800};
-
+ 
 // ── App state ─────────────────────────────────────────────────────────────────
 let D            = null;
 let selectedDate = null;
 let activeIBR    = '6M',  activeASW    = '2Y';
 let activeRngIBR = '1Y',  activeRngASW = '1Y';
 let cIBR = null, cASW = null;
-
+ 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const $    = id => document.getElementById(id);
 const show = id => $(id).classList.remove('hidden');
 const hide = id => $(id).classList.add('hidden');
-
+ 
 function dClass(d){ return d>0.005?'dpos':d<-0.005?'dneg':'dzero'; }
 function dStr(d,unit=''){
   if(Math.abs(d)<0.005) return '±0'+unit;
@@ -351,46 +351,46 @@ function updateTs(){
   $('ts').textContent=n.toLocaleDateString('en-CO',{timeZone:'America/Bogota'})+' · '+
     n.toLocaleTimeString('en-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit'})+' COT';
 }
-
+ 
 // ── Data fetch ────────────────────────────────────────────────────────────────
 async function loadData(forceRefresh=false){
   hide('state-error');
   hide('dashboard');
   show('state-loading');
   $('loading-msg').textContent='Connecting to Databricks…';
-
+ 
   try {
     const suffix = forceRefresh ? '&nocache='+Date.now() : '';
-
+ 
     $('loading-msg').textContent='Fetching IBR swap rates…';
     const [ibrRes, sovRes] = await Promise.all([
       fetch(APPS_SCRIPT_URL+'?dataset=ibr_swaps'+suffix),
       fetch(APPS_SCRIPT_URL+'?dataset=sovereign_curve'+suffix),
     ]);
-
+ 
     $('loading-msg').textContent='Transforming data…';
     const ibrJson = await ibrRes.json();
     const sovJson = await sovRes.json();
-
+ 
     if(ibrJson.status!=='ok') throw new Error('IBR: '+ibrJson.message);
     if(sovJson.status!=='ok') throw new Error('SOV: '+sovJson.message);
-
+ 
     D = buildD(ibrJson.data, sovJson.data);
-
+ 
     // Cache badge
     const badge=$('cache-badge');
     badge.className='cache-badge '+(forceRefresh?'badge-live':'badge-cached');
     badge.textContent=forceRefresh?'⬤ live':'◌ cached';
     show('cache-badge');
-
+ 
     hide('state-loading');
     show('dashboard');
-
+ 
     buildPills();
     setDate(D.latestIbrDate);
     renderIBR(activeIBR);
     renderASW(activeASW);
-
+ 
   } catch(err){
     console.error(err);
     hide('state-loading');
@@ -398,16 +398,17 @@ async function loadData(forceRefresh=false){
     show('state-error');
   }
 }
-
+ 
 // ── Build D object from raw SQL rows ─────────────────────────────────────────
 // Replicates the Python transform that used to produce the embedded JSON
 function buildD(ibrRows, sovRows){
-
+ 
   // ── 1. IBR: group by date → tenor ──
   const ibrByDate={};
   const allIbrDates=new Set();
-
+ 
   ibrRows.forEach(r=>{
+    if(!r.date) return; // skip null-date rows (holidays)
     const d=r.date.slice(0,10);
     const tenor=ID_TO_TENOR[r.identifier];
     if(!tenor) return;
@@ -415,31 +416,32 @@ function buildD(ibrRows, sovRows){
     if(!ibrByDate[d]) ibrByDate[d]={};
     ibrByDate[d][tenor]={b:r.bid, m:r.mid, a:r.ask};
   });
-
+ 
   const availDates=Array.from(allIbrDates).sort();
   const latestIbrDate=availDates[availDates.length-1];
   const prevIbrDate  =availDates[availDates.length-2];
-
+ 
   // ── 2. Sovereign curve: group by date → node ──
   const sovByDate={};
   const sovDateSet=new Set();
-
+ 
   sovRows.forEach(r=>{
+    if(!r.date) return; // skip null-date rows (holidays)
     const d=r.date.slice(0,10);
     sovDateSet.add(d);
     if(!sovByDate[d]) sovByDate[d]={};
     sovByDate[d][r.node]=r.yield_pct;
   });
-
+ 
   const sovDates=Array.from(sovDateSet).sort();
-
+ 
   // Helper: nearest sov date ≤ ibrDate
   function nearestSov(ibrDate){
     let best=null;
     for(const d of sovDates){ if(d<=ibrDate) best=d; else break; }
     return best;
   }
-
+ 
   // ── 3. Build histIBR ──
   const histIBR={};
   IBR_TENORS.forEach(t=>{ histIBR[t]=[]; });
@@ -450,17 +452,17 @@ function buildD(ibrRows, sovRows){
       histIBR[t].push({date:d, b:r.b, m:r.m, a:r.a});
     });
   });
-
+ 
   // ── 4. Build histASW ──
   const histASW={};
   ASW_TENORS.forEach(t=>{ histASW[t]=[]; });
-
+ 
   availDates.forEach(d=>{
     const sovD=nearestSov(d);
     if(!sovD) return;
     const sovData=sovByDate[sovD];
     const ibrData=ibrByDate[d]||{};
-
+ 
     ASW_TENORS.forEach(t=>{
       const node=TENOR_TO_NODE[t];
       const sovY=sovData[node];
@@ -471,7 +473,7 @@ function buildD(ibrRows, sovRows){
       histASW[t].push({date:d, asw:asw_bps});
     });
   });
-
+ 
   // ── 5. Build reverse index byDate ──
   const byDate={};
   IBR_TENORS.forEach(t=>{
@@ -487,10 +489,10 @@ function buildD(ibrRows, sovRows){
       aswByDate[e.date][t]=e.asw;
     });
   });
-
+ 
   // ── 6. Snapshot dates for subtitle ──
   const sovDateForSnap=nearestSov(latestIbrDate)||'—';
-
+ 
   return {
     latestIbrDate, prevIbrDate,
     availDates, availSet:new Set(availDates),
@@ -500,7 +502,7 @@ function buildD(ibrRows, sovRows){
     sovDateForSnap,
   };
 }
-
+ 
 // ── Render rate-run cards ─────────────────────────────────────────────────────
 function renderCards(date){
   const pd      = prevD(date);
@@ -508,9 +510,9 @@ function renderCards(date){
   const ibrP    = pd?(D.byDate[pd]||{}):{};
   const aswDay  = D.aswByDate[date]||{};
   const aswDayP = pd?(D.aswByDate[pd]||{}):{};
-
+ 
   $('ibr-sub').textContent=date+'  ·  Δ vs '+(pd||'—');
-
+ 
   // IBR rows
   let ibrHTML='';
   IBR_TENORS.forEach(t=>{
@@ -524,13 +526,13 @@ function renderCards(date){
     </div>`;
   });
   $('list-ibr').innerHTML=ibrHTML;
-
+ 
   // ASW subtitle
   const sovD=nearestSovDate(date);
   $('asw-sub').innerHTML=
     `Sov Curve: <b>${sovD||'—'}</b> &nbsp;·&nbsp; Swap IBR: <b>${date}</b><br>`+
     `<span style="color:var(--dim)">r_EA = (1 + r_swap/360)^365 − 1</span>`;
-
+ 
   // ASW rows
   let aswHTML='';
   ASW_TENORS.forEach(t=>{
@@ -547,7 +549,7 @@ function renderCards(date){
   $('list-asw').innerHTML=aswHTML||
     '<div style="color:var(--muted);font-size:11px;padding:10px 0">No sovereign data paired to this date</div>';
 }
-
+ 
 // ── Date selector ─────────────────────────────────────────────────────────────
 function setDate(ds, skipPicker){
   const resolved=nearestAvail(ds);
@@ -566,7 +568,7 @@ $('date-picker').addEventListener('change',e=>setDate(e.target.value,true));
 $('btn-prev').onclick   =()=>{const d=prevD(selectedDate);if(d)setDate(d);};
 $('btn-next').onclick   =()=>{const d=nextD(selectedDate);if(d)setDate(d);};
 $('btn-latest').onclick =()=>setDate(D.latestIbrDate);
-
+ 
 // ── Chart options ─────────────────────────────────────────────────────────────
 const BASE_OPT=(cbLabel)=>({
   responsive:true, maintainAspectRatio:false, animation:{duration:300},
@@ -586,13 +588,13 @@ const BASE_OPT=(cbLabel)=>({
        grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}}
   }
 });
-
+ 
 const IBR_OPT=BASE_OPT(ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}%`);
 IBR_OPT.scales.y.ticks.callback=v=>v.toFixed(1)+'%';
 const ASW_OPT=BASE_OPT(ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} bps`);
 ASW_OPT.scales.y.ticks.callback=v=>v.toFixed(0)+' bp';
 ASW_OPT.scales.y.grid.color=ctx=>ctx.tick.value===0?'rgba(240,160,80,.5)':'rgba(90,44,160,.3)';
-
+ 
 function renderIBR(tenor){
   const hist=sliceBy(D.histIBR[tenor]||[], activeRngIBR);
   if(cIBR) cIBR.destroy();
@@ -617,7 +619,7 @@ function renderASW(tenor){
     options:ASW_OPT
   });
 }
-
+ 
 // ── Pills ─────────────────────────────────────────────────────────────────────
 function buildPills(){
   $('pills-ibr').innerHTML='';
@@ -632,7 +634,7 @@ function buildPills(){
     };
     $('pills-ibr').appendChild(b);
   });
-
+ 
   $('pills-asw').innerHTML='';
   ASW_TENORS.forEach(t=>{
     const b=document.createElement('button');
@@ -645,7 +647,7 @@ function buildPills(){
     };
     $('pills-asw').appendChild(b);
   });
-
+ 
   $('range-ibr').innerHTML='';
   RANGES.forEach(r=>{
     const b=document.createElement('button');
@@ -658,7 +660,7 @@ function buildPills(){
     };
     $('range-ibr').appendChild(b);
   });
-
+ 
   $('range-asw').innerHTML='';
   RANGES.forEach(r=>{
     const b=document.createElement('button');
@@ -672,7 +674,7 @@ function buildPills(){
     $('range-asw').appendChild(b);
   });
 }
-
+ 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 Chart.defaults.color='#7a4ccc';
 Chart.defaults.borderColor='rgba(90,44,160,.4)';
