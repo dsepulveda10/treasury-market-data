@@ -26,7 +26,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--uv);color:var(--off-white);font-family:'Outfit',sans-serif;font-size:14px;min-height:100vh}
-
+ 
 /* ── Header ── */
 header{display:flex;align-items:center;gap:13px;padding:13px 26px;
   background:rgba(42,16,81,.88);backdrop-filter:blur(12px);
@@ -44,7 +44,7 @@ header h1{font-size:16px;font-weight:700;letter-spacing:-.3px}
 .cache-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;white-space:nowrap}
 .badge-live{color:var(--green);background:rgba(39,201,122,.08);border:1px solid rgba(39,201,122,.2)}
 .badge-cached{color:var(--muted);background:rgba(90,44,160,.2);border:1px solid var(--uv-border)}
-
+ 
 /* ── Layout ── */
 main{padding:22px 26px 48px;max-width:1100px}
 .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:6px}
@@ -54,7 +54,7 @@ main{padding:22px 26px 48px;max-width:1100px}
 .sec-head h2{font-size:15px;font-weight:700;letter-spacing:-.2px}
 .divider{height:1px;background:var(--uv-border);margin-bottom:24px}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-
+ 
 /* ── Data loading banner ── */
 .data-banner{
   display:flex;align-items:center;gap:10px;
@@ -68,7 +68,7 @@ main{padding:22px 26px 48px;max-width:1100px}
 .banner-dot{width:7px;height:7px;border-radius:50%;background:var(--green);
   box-shadow:0 0 6px var(--green);flex-shrink:0}
 .banner-err{color:var(--amber)}
-
+ 
 /* ── Calculator cards ── */
 .calc-card{background:var(--uv-card);border:1px solid var(--uv-border);
   border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
@@ -83,7 +83,7 @@ main{padding:22px 26px 48px;max-width:1100px}
 .calc-title{font-size:14px;font-weight:700;letter-spacing:-.2px;margin-bottom:2px}
 .calc-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
 .calc-body{padding:20px;flex:1;display:flex;flex-direction:column;gap:0}
-
+ 
 /* ── Fields ── */
 .field-group{margin-bottom:14px}
 .field-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;
@@ -107,14 +107,14 @@ input::-webkit-calendar-picker-indicator{filter:invert(70%) sepia(40%) saturate(
 input.sofr-field{border-color:var(--amber-dim)}
 input.sofr-field:focus{border-color:var(--amber)}
 input.prefilled{border-color:rgba(39,201,122,.35)}
-
+ 
 /* IBR prefill hint */
 .prefill-hint{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green);
   margin-top:4px;display:flex;align-items:center;gap:4px}
 .sofr-reset-link{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--amber);
   margin-top:4px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
 .sofr-reset-link:hover{color:var(--off-white)}
-
+ 
 /* ── Divider / Results ── */
 .calc-divider{height:1px;background:var(--uv-border);margin:18px 0}
 .result-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
@@ -143,7 +143,7 @@ input.prefilled{border-color:rgba(39,201,122,.35)}
   border-radius:6px;padding:8px 12px;margin-top:8px}
 .placeholder-state{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);
   text-align:center;padding:18px 0}
-
+ 
 /* select style */
 select{
   width:100%;background:var(--uv-input);border:1px solid var(--uv-border);
@@ -151,7 +151,7 @@ select{
   padding:8px 10px;border-radius:8px;outline:none;cursor:pointer;
   transition:border-color .2s;appearance:none}
 select:focus{border-color:var(--lp)}
-
+ 
 footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
   text-align:center;padding:20px 26px 14px;border-top:1px solid var(--uv-border);margin-top:8px}
 .hidden{display:none!important}
@@ -159,7 +159,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
 </style>
 </head>
 <body>
-
+ 
 <header>
   <div class="nu">nu</div>
   <h1>Treasury's Market Data</h1>
@@ -171,22 +171,22 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
     <span id="cache-badge" class="cache-badge hidden"></span>
   </div>
 </header>
-
+ 
 <main>
   <div class="sec-head">
     <span class="sec-num">SECTION 03</span>
     <h2>Calculator</h2>
   </div>
   <div class="divider"></div>
-
+ 
   <!-- Data loading banner -->
   <div class="data-banner" id="data-banner">
     <div class="banner-spin" id="banner-spin"></div>
     <span id="banner-text">Fetching latest market rates…</span>
   </div>
-
+ 
   <div class="two-col">
-
+ 
     <!-- ══ CALCULATOR 1 — Asset Swap ══════════════════════════════════════ -->
     <div class="calc-card asw">
       <div class="calc-header">
@@ -195,7 +195,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         <div class="calc-sub">Sovereign bond vs IBR swap · Spread in bps</div>
       </div>
       <div class="calc-body">
-
+ 
         <div class="field-group">
           <div class="field-label">Bond <span class="badge">EA / 365</span></div>
           <div class="field-row two">
@@ -228,7 +228,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             </div>
           </div>
         </div>
-
+ 
         <div class="field-group">
           <div class="field-label">IBR Swap Fixed Leg <span class="badge">ACT / 360</span></div>
           <div class="input-wrap">
@@ -239,23 +239,23 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             ⬤ Pre-filled from latest IBR data
           </div>
         </div>
-
+ 
         <div class="calc-divider"></div>
-
+ 
         <div class="result-label">Results</div>
         <div id="asw-result">
           <div class="placeholder-state">Enter bond yield and swap rate to calculate ↑</div>
         </div>
         <div id="asw-error" class="calc-error hidden"></div>
-
+ 
         <div class="formula-note">
           <b>Conversion:</b> r_EA365 = (1 + r_ACT360 / 360)^365 − 1<br>
           <b>Spread:</b> Bond Yield (EA/365) − Swap Rate (EA/365)
         </div>
-
+ 
       </div>
     </div>
-
+ 
     <!-- ══ CALCULATOR 2 — USDCOP Arbitrage ════════════════════════════════ -->
     <div class="calc-card arb">
       <div class="calc-header">
@@ -264,7 +264,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         <div class="calc-sub">Implicit COP rate vs USD yield · Total return</div>
       </div>
       <div class="calc-body">
-
+ 
         <div class="field-group">
           <div class="field-label">FX Rate</div>
           <div class="field-row two">
@@ -284,7 +284,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             </div>
           </div>
         </div>
-
+ 
         <div class="field-group">
           <div class="field-label">Period</div>
           <div class="field-row two">
@@ -298,7 +298,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             </div>
           </div>
         </div>
-
+ 
         <div class="field-group">
           <div class="field-label">USD Yield (SOFR Overnight) <span class="badge">Reference</span></div>
           <div class="input-wrap">
@@ -307,36 +307,36 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
           </div>
           <div class="sofr-reset-link" id="sofr-reset">↩ Reset to latest</div>
         </div>
-
+ 
         <div class="calc-divider"></div>
-
+ 
         <div class="result-label">Results</div>
         <div id="arb-result">
           <div class="placeholder-state">Enter spot, forward points and dates to calculate ↑</div>
         </div>
         <div id="arb-error" class="calc-error hidden"></div>
-
+ 
         <div class="formula-note">
           <b>Forward:</b> F = Spot + Fwd Points<br>
           <b>Implicit rate (EA/360):</b> r = (F/S)^(360/days) − 1<br>
           <b>Total yield:</b> (1 + r_implicit) × (1 + r_SOFR) − 1
         </div>
-
+ 
       </div>
     </div>
-
+ 
   </div>
 </main>
-
+ 
 <footer>Bloomberg · Nu Colombia Treasury ALM · @col_treasury_alm</footer>
-
+ 
 <script>
 // ╔══════════════════════════════════════════════════════════════════════════╗
 // ║  Paste your two Apps Script URLs here                                   ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
-const URL_USDCOP    = 'https://script.google.com/macros/s/AKfycbz8GPaScOPWG5iW7quJAvAzH5qhJ4OR7SAyEL2-HVQC0vDCVK7QN94uaQ3aFVm1m7tl/exec';    // USDCOP + SOFR script
-const URL_ASSET_SWAPS = 'https://script.google.com/macros/s/AKfycbxhY3mnMnqPDDTK6E7gs_cqFyudc6D7yARIWjKQ5irfq2XCK2eD2bC4S0ewvWTBy0t1/exec'; // IBR swaps script
-
+const URL_USDCOP    = 'PASTE_USDCOP_URL_HERE';    // USDCOP + SOFR script
+const URL_ASSET_SWAPS = 'PASTE_ASSET_SWAPS_URL_HERE'; // IBR swaps script
+ 
 // ── Tenor → IBR node map (matches maturity dropdown values in days) ──────────
 const MATURITY_TO_TENOR = {
   '180':'6M', '360':'1Y', '540':'1.5Y', '720':'2Y',
@@ -349,7 +349,7 @@ const ID_TO_TENOR = {
   'CLSWIB2 BGN Curncy':'2Y',  'CLSWIB3 BGN Curncy':'3Y',
   'CLSWIB4 BGN Curncy':'4Y',  'CLSWIB5 BGN Curncy':'5Y',
 };
-
+ 
 // ── Live data store ───────────────────────────────────────────────────────────
 let LIVE = {
   sofrRate:    null,
@@ -357,11 +357,11 @@ let LIVE = {
   spotUSDCOP:  null,
   ibrRates:    {},   // tenor → mid %
 };
-
+ 
 const $    = id => document.getElementById(id);
 const show = id => $(id).classList.remove('hidden');
 const hide = id => $(id).classList.add('hidden');
-
+ 
 function updateTs(){
   const n=new Date();
   $('ts').textContent=n.toLocaleDateString('en-CO',{timeZone:'America/Bogota'})+' · '+
@@ -369,7 +369,7 @@ function updateTs(){
 }
 function parseNum(id){ return parseFloat($(id).value); }
 function todayStr(){ return new Date().toISOString().slice(0,10); }
-
+ 
 function resultBox(label, value, colorCls='', sub='', highlight=''){
   return `<div class="result-box ${highlight}">
     <div class="res-label">${label}</div>
@@ -377,7 +377,7 @@ function resultBox(label, value, colorCls='', sub='', highlight=''){
     ${sub?`<div class="res-sub">${sub}</div>`:''}
   </div>`;
 }
-
+ 
 // ── Fetch live data ───────────────────────────────────────────────────────────
 async function loadLiveData(){
   try {
@@ -385,24 +385,25 @@ async function loadLiveData(){
       fetch(URL_USDCOP+'?dataset=forward_rates'),
       fetch(URL_ASSET_SWAPS+'?dataset=ibr_swaps'),
     ]);
-
+ 
     const fxJson  = await fxRes.json();
     const ibrJson = await ibrRes.json();
-
+ 
     // ── Parse SOFR & spot from FX data ──
     if(fxJson.status==='ok'){
       // find latest date rows
       const rows = fxJson.data;
       const dates = [...new Set(rows.map(r=>{
         const d=r.date||'';
+        if(!d) return null;
         if(d.includes('/')){
           const p=d.split('/'); const y=p[2].length===2?'20'+p[2]:p[2];
           return y+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');
         }
         const p=d.split('-'); return p[0]+'-'+p[1].padStart(2,'0')+'-'+p[2].padStart(2,'0');
-      }))].sort();
+      }).filter(Boolean))].sort();
       const latest=dates[dates.length-1];
-
+ 
       // spot from latest date
       const spotRow=rows.find(r=>{
         const d=r.date||'';
@@ -413,7 +414,7 @@ async function loadLiveData(){
       });
       if(spotRow) LIVE.spotUSDCOP=parseFloat(spotRow.spot_mid);
     }
-
+ 
     // ── Also fetch SOFR separately ──
     const sofrRes  = await fetch(URL_USDCOP+'?dataset=sofr');
     const sofrJson = await sofrRes.json();
@@ -430,20 +431,22 @@ async function loadLiveData(){
       LIVE.sofrRate=parseFloat(sorted[0].sofr_pct);
       LIVE.sofrDate=sorted[0].date;
     }
-
+ 
     // ── Parse IBR rates — latest date ──
     if(ibrJson.status==='ok'){
       const rows=ibrJson.data;
       // find latest date
       const dates=[...new Set(rows.map(r=>{
         const d=r.date||'';
+        if(!d) return null;
         if(d.includes('/')){const p=d.split('/');const y=p[2].length===2?'20'+p[2]:p[2];return y+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');}
         const p=d.split('-');return p[0]+'-'+p[1].padStart(2,'0')+'-'+p[2].padStart(2,'0');
-      }))].sort();
+      }).filter(Boolean))].sort();
       const latest=dates[dates.length-1];
-
+ 
       rows.forEach(r=>{
         const d=r.date||'';
+        if(!d) return;
         let pd;
         if(d.includes('/')){const p=d.split('/');const y=p[2].length===2?'20'+p[2]:p[2];pd=y+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');}
         else{const p=d.split('-');pd=p[0]+'-'+p[1].padStart(2,'0')+'-'+p[2].padStart(2,'0');}
@@ -452,20 +455,20 @@ async function loadLiveData(){
         if(tenor) LIVE.ibrRates[tenor]=parseFloat(r.mid);
       });
     }
-
+ 
     // ── Pre-fill inputs ──
     applyLiveDefaults();
-
+ 
     // Update banner
     const banner=$('data-banner');
     banner.innerHTML=`<div class="banner-dot"></div>
       <span>Live data loaded · SOFR ${LIVE.sofrRate?.toFixed(2)||'—'}% · Spot ${LIVE.spotUSDCOP?.toLocaleString('en-US',{maximumFractionDigits:2})||'—'} COP · IBR as of ${Object.keys(LIVE.ibrRates).length} tenors</span>`;
-
+ 
     const badge=$('cache-badge');
     badge.className='cache-badge badge-live';
     badge.textContent='⬤ live';
     show('cache-badge');
-
+ 
   } catch(err){
     console.error('Live data error:', err);
     $('data-banner').innerHTML=
@@ -474,7 +477,7 @@ async function loadLiveData(){
     applyLiveDefaults();
   }
 }
-
+ 
 function applyLiveDefaults(){
   // Spot
   if(LIVE.spotUSDCOP && !$('arb-spot').value){
@@ -491,7 +494,7 @@ function applyLiveDefaults(){
   prefillIBR();
   calcARB();
 }
-
+ 
 function prefillIBR(){
   const matVal=$('asw-maturity').value;
   const tenor=MATURITY_TO_TENOR[matVal];
@@ -506,7 +509,7 @@ function prefillIBR(){
   }
   calcASW();
 }
-
+ 
 // ── ASW Calculator ────────────────────────────────────────────────────────────
 function calcASW(){
   const matSel    = $('asw-maturity').value;
@@ -514,9 +517,9 @@ function calcASW(){
   const days      = matSel==='custom' ? customD : parseInt(matSel);
   const bondYield = parseNum('asw-bond-yield');
   const swapRate  = parseNum('asw-swap-rate');
-
+ 
   hide('asw-error');
-
+ 
   if(isNaN(bondYield)||isNaN(swapRate)){
     $('asw-result').innerHTML='<div class="placeholder-state">Enter bond yield and swap rate to calculate ↑</div>';
     return;
@@ -525,7 +528,7 @@ function calcASW(){
     $('asw-error').textContent='Rates must be positive.'; show('asw-error');
     $('asw-result').innerHTML=''; return;
   }
-
+ 
   const r_swap_ea365 = Math.pow(1+swapRate/100/360,365)-1;
   const r_bond_ea365 = bondYield/100;
   const spread_bps   = (r_bond_ea365-r_swap_ea365)*10000;
@@ -533,7 +536,7 @@ function calcASW(){
   const spreadHL     = spread_bps>=0?'highlight':'highlight-amber';
   const spreadSign   = spread_bps>=0?'+':'';
   const dayLabel     = matSel==='custom'?`${days}d custom`:$('asw-maturity').options[$('asw-maturity').selectedIndex].text;
-
+ 
   $('asw-result').innerHTML=
     `<div class="result-grid two" style="margin-bottom:8px">
       ${resultBox('Bond Yield',(bondYield).toFixed(2)+'%','blue','EA / 365','highlight-blue')}
@@ -547,7 +550,7 @@ function calcASW(){
       ${resultBox('Asset Swap Spread',spreadSign+spread_bps.toFixed(1)+' bps',spreadColor,'Bond − Swap (EA/365)',spreadHL)}
     </div>`;
 }
-
+ 
 $('asw-maturity').addEventListener('change',function(){
   this.value==='custom'?show('asw-custom-days-wrap'):hide('asw-custom-days-wrap');
   prefillIBR(); // update IBR pre-fill for new tenor
@@ -555,7 +558,7 @@ $('asw-maturity').addEventListener('change',function(){
 $('asw-bond-yield').addEventListener('input', calcASW);
 $('asw-swap-rate').addEventListener('input', ()=>{ hide('asw-prefill-hint'); calcASW(); });
 $('asw-custom-days').addEventListener('input', calcASW);
-
+ 
 // ── ARB Calculator ────────────────────────────────────────────────────────────
 function calcARB(){
   const spot   = parseNum('arb-spot');
@@ -563,33 +566,33 @@ function calcARB(){
   const startD = $('arb-start').value;
   const endD   = $('arb-end').value;
   const sofr   = parseNum('arb-sofr');
-
+ 
   hide('arb-error');
-
+ 
   if(isNaN(spot)||isNaN(fwdPts)||!startD||!endD){
     $('arb-result').innerHTML='<div class="placeholder-state">Enter spot, forward points and dates to calculate ↑</div>';
     return;
   }
   if(spot<=0){ $('arb-error').textContent='Spot must be positive.'; show('arb-error'); return; }
-
+ 
   const days=Math.round((new Date(endD)-new Date(startD))/86400000);
   if(days<=0){
     $('arb-error').textContent='Maturity date must be after start date.';
     show('arb-error'); $('arb-result').innerHTML=''; return;
   }
-
+ 
   const forward     = spot+fwdPts;
   const r_impl      = Math.pow(forward/spot,360/days)-1;
   const r_sofr      = (!isNaN(sofr)?sofr:(LIVE.sofrRate||3.57))/100;
   const total_yield = (1+r_impl)*(1+r_sofr)-1;
-
+ 
   let tenorLabel='';
   if(days<=35) tenorLabel='~1M'; else if(days<=75) tenorLabel='~2M';
   else if(days<=105) tenorLabel='~3M'; else if(days<=135) tenorLabel='~4M';
   else if(days<=165) tenorLabel='~5M'; else if(days<=210) tenorLabel='~6M';
   else if(days<=300) tenorLabel='~9M'; else if(days<=390) tenorLabel='~1Y';
   else tenorLabel=`${(days/365).toFixed(1)}Y`;
-
+ 
   $('arb-result').innerHTML=
     `<div class="result-grid two" style="margin-bottom:8px">
       ${resultBox('Forward Rate',forward.toLocaleString('en-US',{maximumFractionDigits:3}),'blue','Spot + Fwd Points','highlight-blue')}
@@ -603,7 +606,7 @@ function calcARB(){
       ${resultBox('Total Yield',(total_yield*100).toFixed(2)+'%','green','(1+r_impl)×(1+SOFR)−1','highlight')}
     </div>`;
 }
-
+ 
 $('arb-spot').addEventListener('input',   calcARB);
 $('arb-fwdpts').addEventListener('input', calcARB);
 $('arb-start').addEventListener('change', calcARB);
@@ -612,7 +615,7 @@ $('arb-sofr').addEventListener('input',   calcARB);
 $('sofr-reset').addEventListener('click',()=>{
   if(LIVE.sofrRate){ $('arb-sofr').value=LIVE.sofrRate.toFixed(2); calcARB(); }
 });
-
+ 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 updateTs();
 $('arb-start').value=todayStr();
