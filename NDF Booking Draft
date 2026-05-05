@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NDF Booking Screen — Prototype</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f7; color: #1d1d1f; font-size: 14px; line-height: 1.5; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+  /* Banner */
+  .banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 10px 16px; font-size: 13px; color: #856404; margin-bottom: 16px; }
+
+  /* Breadcrumb */
+  .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 14px; }
+  .breadcrumb .back { font-weight: 600; color: #1d1d1f; text-decoration: none; }
+  .breadcrumb .product { font-weight: 700; }
+  .badge { background: #e8e8ed; color: #6e6e73; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: start; }
+
+  /* Card */
+  .card { background: #fff; border: 1px solid #d2d2d7; border-radius: 12px; margin-bottom: 20px; }
+  .card-header { padding: 12px 16px; border-bottom: 1px solid #e8e8ed; font-size: 12px; font-weight: 600; color: #6e6e73; text-transform: uppercase; letter-spacing: 0.5px; }
+  .card-body { padding: 16px; }
+
+  /* Form elements */
+  .field-label { font-size: 11px; font-weight: 600; color: #86868b; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+  .field-label .info { width: 12px; height: 12px; border: 1.5px solid #86868b; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-style: italic; color: #86868b; }
+  select, input[type="text"], input[type="date"] { width: 100%; height: 32px; border: 1px solid #d2d2d7; border-radius: 6px; padding: 0 10px; font-size: 13px; color: #1d1d1f; background: #fff; outline: none; transition: border-color 0.15s; }
+  select:focus, input:focus { border-color: #0071e3; }
+  select:disabled, input:disabled { background: #f5f5f7; color: #86868b; cursor: not-allowed; }
+  .hint { font-size: 12px; color: #86868b; margin-top: 2px; font-style: italic; }
+
+  /* Grid helpers */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .stack { display: flex; flex-direction: column; }
+  .gap-4 { gap: 4px; }
+  .gap-14 { gap: 14px; }
+  .row { display: flex; align-items: center; gap: 8px; }
+
+  /* Toggle BUY/SELL */
+  .side-toggle { display: flex; gap: 0; }
+  .side-btn { padding: 4px 14px; font-size: 12px; font-weight: 600; border: 1px solid #d2d2d7; cursor: pointer; transition: all 0.15s; background: #fff; color: #6e6e73; }
+  .side-btn:first-child { border-radius: 6px 0 0 6px; }
+  .side-btn:last-child { border-radius: 0 6px 6px 0; border-left: none; }
+  .side-btn.buy-active { background: #34c759; color: #fff; border-color: #34c759; }
+  .side-btn.sell-active { background: #ff3b30; color: #fff; border-color: #ff3b30; }
+
+  /* Trade row */
+  .trade-row { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+  .trade-row .vs { color: #86868b; padding-bottom: 6px; font-size: 13px; }
+
+  /* Divider */
+  .divider { border: none; border-top: 1px solid #e8e8ed; margin: 4px 0; }
+
+  /* Preview box */
+  .preview-box { background: #f5f5f7; border-radius: 6px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 10px; }
+  .pill-green { background: #d1f2d9; color: #0a7c2e; }
+  .pill-red { background: #fdd; color: #c00; }
+  .preview-meta { font-size: 12px; color: #86868b; margin-left: auto; }
+
+  /* Details box */
+  .details-box { border: 1px solid #d2d2d7; border-radius: 6px; padding: 12px 14px; background: #fafafa; }
+  .details-title { font-size: 12px; font-weight: 600; color: #86868b; margin-bottom: 8px; }
+
+  /* Footer */
+  .footer { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+  .validation { background: #fdd; border: 1px solid #f5c6cb; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #c00; }
+  .validation strong { font-weight: 700; }
+  .footer-spacer { flex: 1; }
+  .btn { height: 30px; padding: 0 16px; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-ghost { background: transparent; color: #6e6e73; }
+  .btn-ghost:hover { background: #f0f0f0; }
+  .btn-secondary { background: #e8e8ed; color: #1d1d1f; }
+  .btn-secondary:hover { background: #d2d2d7; }
+  .btn-primary { background: #5e5ce6; color: #fff; }
+  .btn-primary:hover { background: #4a48c4; }
+  .btn-primary:disabled { background: #b0b0c0; cursor: not-allowed; }
+
+  /* Summary */
+  .summary-card { position: sticky; top: 24px; }
+  .summary-row { display: flex; justify-content: space-between; padding: 3px 0; }
+  .summary-label { font-size: 12px; color: #86868b; }
+  .summary-value { font-size: 13px; font-weight: 600; color: #1d1d1f; }
+  .summary-label-sm { font-size: 12px; color: #aeaeb2; }
+  .summary-value-sm { font-size: 12px; color: #aeaeb2; }
+
+  .section-label { font-size: 12px; font-weight: 600; color: #86868b; }
+
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .trade-row { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="banner">You're in staging environment</div>
+
+  <div class="breadcrumb">
+    <span class="back">&larr; Catalog /</span>
+    <span class="product">NDF</span>
+    <span class="badge">CASH-SETTLED</span>
+  </div>
+
+  <div class="layout">
+    <div>
+      <!-- Parties & venue -->
+      <div class="card">
+        <div class="card-header">Parties & venue</div>
+        <div class="card-body">
+          <div class="stack gap-14">
+            <p class="hint" style="margin-top:0">Pick the booking legal entity first &mdash; the counterparty and clearing venue dropdowns are filtered by the active trading-permission matrix.</p>
+
+            <div class="grid-2">
+              <div class="stack gap-4">
+                <label class="field-label">LEGAL ENTITY</label>
+                <select id="legalEntity" onchange="onLegalEntityChange()">
+                  <option value="">&mdash;</option>
+                  <option value="nu_br">Nu Pagamentos S.A.</option>
+                  <option value="nu_co">Nu Colombia S.A.</option>
+                  <option value="nu_us">NU US</option>
+                </select>
+              </div>
+              <div class="stack gap-4">
+                <label class="field-label">STRATEGY *</label>
+                <select id="strategy" onchange="update()">
+                  <option value="">Select strategy</option>
+                  <option value="dividends">Dividends</option>
+                  <option value="invoices">Invoices</option>
+                  <option value="rsu">RSU</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="stack gap-4">
+                <label class="field-label">COUNTERPARTY</label>
+                <select id="counterparty" onchange="update()" disabled>
+                  <option value="">Pick a legal entity first</option>
+                  <option value="jpmorgan">JPMorgan Chase</option>
+                  <option value="goldman">Goldman Sachs</option>
+                </select>
+              </div>
+              <div class="stack gap-4">
+                <label class="field-label">CLEARING VENUE</label>
+                <select id="clearingVenue" onchange="update()" disabled>
+                  <option value="">Pick a counterparty first</option>
+                  <option value="otc">OTC_BILATERAL</option>
+                  <option value="b3">B3</option>
+                </select>
+              </div>
+            </div>
+
+            <hr class="divider">
+            <span class="section-label">Classifications</span>
+
+            <div class="grid-3">
+              <div class="stack gap-4">
+                <label class="field-label">GAAP</label>
+                <input type="text" id="gaap" disabled placeholder="Select a legal entity">
+              </div>
+              <div class="stack gap-4">
+                <label class="field-label">ACCOUNTING CLASSIFICATION *</label>
+                <select id="accountingClass" onchange="update()" disabled>
+                  <option value="">Select classification</option>
+                  <option value="fvoci">FVOCI</option>
+                  <option value="fvpl">FVP&amp;L</option>
+                  <option value="htc">HTC</option>
+                </select>
+              </div>
+              <div class="stack gap-4">
+                <label class="field-label">REGULATORY CLASSIFICATION *</label>
+                <select id="regulatoryClass" onchange="update()">
+                  <option value="">Select classification</option>
+                  <option value="banking">Banking</option>
+                  <option value="trading">Trading</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="stack gap-4">
+                <label class="field-label">HEDGE DESIGNATION *</label>
+                <select id="hedgeDesignation" onchange="update()">
+                  <option value="">Select designation</option>
+                  <option value="object">Object</option>
+                  <option value="instrument">Instrument</option>
+                  <option value="no_hedge">No Hedge</option>
+                </select>
+              </div>
+              <div class="stack gap-4">
+                <label class="field-label">HEDGE ACCOUNTING TYPE *</label>
+                <select id="hedgeAccountingType" onchange="update()">
+                  <option value="">Select type</option>
+                  <option value="cash_flow">Cash Flow Hedge</option>
+                  <option value="fair_value">Fair Value Hedge</option>
+                  <option value="net_investment">Net Investment</option>
+                  <option value="no_hedge">No Hedge</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trade -->
+      <div class="card">
+        <div class="card-header">Trade</div>
+        <div class="card-body">
+          <div class="stack gap-14">
+            <p class="hint" style="margin-top:0">Type it the way you'd quote it: amount, currency, counter currency, rate. The other leg calculates.</p>
+
+            <div class="trade-row">
+              <div class="stack gap-4">
+                <label class="field-label">SIDE OF BASE CURRENCY</label>
+                <div class="side-toggle">
+                  <button class="side-btn buy-active" id="buyBtn" onclick="setSide('buy')">BUY</button>
+                  <button class="side-btn" id="sellBtn" onclick="setSide('sell')">SELL</button>
+                </div>
+              </div>
+              <div class="stack gap-4" style="flex:1;min-width:120px">
+                <label class="field-label">AMOUNT</label>
+                <input type="text" id="amount" value="1,000,000" oninput="update()">
+              </div>
+              <div class="stack gap-4" style="min-width:80px">
+                <label class="field-label">BASE CURRENCY</label>
+                <select id="currency" onchange="onCurrencyChange()">
+                  <option value="USD">USD</option><option value="EUR">EUR</option><option value="BRL">BRL</option><option value="GBP">GBP</option><option value="JPY">JPY</option>
+                </select>
+              </div>
+              <span class="vs">vs</span>
+              <div class="stack gap-4" style="min-width:80px">
+                <label class="field-label">COUNTER CURRENCY</label>
+                <select id="counter" onchange="onCounterChange()">
+                  <option value="BRL">BRL</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="JPY">JPY</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="stack gap-4">
+                <label class="field-label">AGREED RATE <span class="info">i</span></label>
+                <div class="row">
+                  <input type="text" id="rate" value="5,2354" oninput="update()" style="flex:1">
+                  <span style="font-size:12px;color:#86868b" id="rateSuffix">USD/BRL</span>
+                </div>
+                <span class="hint" id="rateHint">1 USD = 5,2354 BRL</span>
+              </div>
+              <div class="stack gap-4">
+                <label class="field-label">SETTLEMENT CCY <span class="info">i</span></label>
+                <select id="settlementCcy" onchange="update()">
+                  <option value="USD">USD</option>
+                  <option value="BRL">BRL</option>
+                </select>
+                <span class="hint" id="settlementHint">Net settles in <b>USD</b> on value date.</span>
+              </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="preview-box" id="previewBox">
+              <span class="pill pill-green" id="previewBuy">Buy 1,000,000.00 USD</span>
+              <span style="color:#86868b">&rarr;</span>
+              <span class="pill pill-red" id="previewSell">Sell 5,235,400.00 BRL</span>
+              <span class="preview-meta" id="previewMeta">@ 5,2354 USD/BRL &middot; settles net in <b>USD</b></span>
+            </div>
+
+            <p class="hint" id="deliveryNote">Neither leg physically delivers &mdash; only a net USD amount flows on value date, crystallised against PTAX.</p>
+
+            <div class="details-box">
+              <div class="details-title">Details</div>
+              <div class="grid-2">
+                <div class="stack gap-4">
+                  <label class="field-label">FIXING TYPE *</label>
+                  <select id="fixingType" onchange="onFixingTypeChange()">
+                    <option value="">Select fixing type</option>
+                    <option value="PTAX">PTAX</option>
+                    <option value="WMR_16">WMR London 16:00</option>
+                    <option value="WMR_15">WMR London 15:00</option>
+                  </select>
+                </div>
+                <div class="stack gap-4">
+                  <label class="field-label">PRICE SIDE *</label>
+                  <select id="priceSide" onchange="update()" disabled>
+                    <option value="">Select price side</option>
+                    <option value="mid">MID</option>
+                    <option value="bid">BID</option>
+                    <option value="ask">ASK</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="card">
+        <div class="card-header">Dates</div>
+        <div class="card-body">
+          <div class="stack gap-14">
+            <p class="hint" style="margin-top:0">Trade &middot; fixing &middot; value &mdash; required. No auto-derivation: the trader fills them explicitly.</p>
+            <div class="grid-3">
+              <div class="stack gap-4">
+                <label class="field-label">TRADE DATE (T) <span class="info">i</span></label>
+                <input type="date" id="tradeDate" onchange="update()">
+              </div>
+              <div class="stack gap-4">
+                <label class="field-label">FIXING DATE <span class="info">i</span></label>
+                <input type="date" id="fixingDate" onchange="update()">
+              </div>
+              <div class="stack gap-4">
+                <label class="field-label">VALUE DATE <span class="info">i</span></label>
+                <input type="date" id="valueDate" onchange="update()">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="validation" id="validationMsg"><strong>12 items to fix</strong> &middot; Legal Entity</div>
+        <div class="footer-spacer"></div>
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-secondary">Save as draft</button>
+        <button class="btn btn-primary" id="bookBtn" disabled>Book NDF</button>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-card">
+      <div class="card">
+        <div class="card-header">Summary</div>
+        <div class="card-body">
+          <div class="stack" style="gap:8px">
+            <div class="summary-row"><span class="summary-label">PAIR</span><span class="summary-value" id="sPair">USD/BRL</span></div>
+            <div class="summary-row"><span class="summary-label">BUY</span><span class="summary-value" id="sBuy">1,000,000.00 USD</span></div>
+            <div class="summary-row"><span class="summary-label">SELL</span><span class="summary-value" id="sSell">5,235,400.00 BRL</span></div>
+            <div class="summary-row"><span class="summary-label">AGREED</span><span class="summary-value" id="sAgreed">5,2354</span></div>
+            <div class="summary-row"><span class="summary-label">SETTLES IN</span><span class="summary-value" id="sSettles">USD</span></div>
+            <div class="summary-row"><span class="summary-label">FIXING</span><span class="summary-value" id="sFixing">&mdash;</span></div>
+            <hr class="divider">
+            <div class="summary-row"><span class="summary-label-sm">Value:</span><span class="summary-value-sm">&mdash;</span></div>
+            <div class="summary-row"><span class="summary-label-sm">Fixing date:</span><span class="summary-value-sm" id="sFixDate">&mdash;</span></div>
+            <div class="summary-row"><span class="summary-label-sm">Strategy:</span><span class="summary-value-sm" id="sStrategy">&mdash;</span></div>
+            <div class="summary-row"><span class="summary-label-sm">Counterparty:</span><span class="summary-value-sm" id="sCpty">&mdash;</span></div>
+            <div class="summary-row"><span class="summary-label-sm">Master:</span><span class="summary-value-sm">&mdash;</span></div>
+            <div class="summary-row"><span class="summary-label-sm">Venue:</span><span class="summary-value-sm">OTC_BILATERAL</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const today = new Date().toISOString().split('T')[0];
+  ['tradeDate', 'fixingDate', 'valueDate'].forEach(function(id) {
+    const el = document.getElementById(id);
+    el.setAttribute('min', '2020-01-01');
+    el.defaultValue = '';
+  });
+});
+
+let side = 'buy';
+
+function val(id) { return document.getElementById(id).value; }
+
+function setSide(s) {
+  side = s;
+  document.getElementById('buyBtn').className = 'side-btn' + (s === 'buy' ? ' buy-active' : '');
+  document.getElementById('sellBtn').className = 'side-btn' + (s === 'sell' ? ' sell-active' : '');
+  update();
+}
+
+function onFixingTypeChange() {
+  const ft = val('fixingType');
+  const ps = document.getElementById('priceSide');
+  ps.disabled = !ft;
+  if (ft === 'PTAX') {
+    ps.innerHTML = '<option value="">Select price side</option><option value="compra">COMPRA</option><option value="venda">VENDA</option>';
+  } else {
+    ps.innerHTML = '<option value="">Select price side</option><option value="mid">MID</option><option value="bid">BID</option><option value="ask">ASK</option>';
+  }
+  ps.value = '';
+  update();
+}
+
+function rebuildSettlementCcy() {
+  const ccy = val('currency'), ctr = val('counter');
+  const sel = document.getElementById('settlementCcy');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="' + ccy + '">' + ccy + '</option>';
+  if (ctr !== ccy) {
+    sel.innerHTML += '<option value="' + ctr + '">' + ctr + '</option>';
+  }
+  sel.value = (prev === ccy || prev === ctr) ? prev : ccy;
+}
+
+function onCurrencyChange() {
+  rebuildSettlementCcy();
+  update();
+}
+
+function onCounterChange() {
+  rebuildSettlementCcy();
+  update();
+}
+
+function onLegalEntityChange() {
+  const le = val('legalEntity');
+  const gaapVal = le === 'nu_us' ? 'US GAAP' : le ? 'IFRS' : '';
+  document.getElementById('gaap').value = gaapVal;
+  document.getElementById('counterparty').disabled = !le;
+  document.getElementById('accountingClass').disabled = !gaapVal;
+
+  const acSel = document.getElementById('accountingClass');
+  const prevVal = acSel.value;
+  if (gaapVal === 'US GAAP') {
+    acSel.innerHTML = '<option value="">Select classification</option><option value="afs">AFS</option><option value="trading">Trading</option><option value="htm">HTM</option>';
+  } else {
+    acSel.innerHTML = '<option value="">Select classification</option><option value="fvoci">FVOCI</option><option value="fvpl">FVP&amp;L</option><option value="htc">HTC</option>';
+  }
+  acSel.value = '';
+  update();
+}
+
+function update() {
+  const ccy = val('currency'), ctr = val('counter'), r = val('rate'), sc = val('settlementCcy');
+  const amtRaw = val('amount').replace(/,/g, '');
+  const amtNum = parseFloat(amtRaw) || 0;
+  const rateNum = parseFloat(r.replace(',', '.')) || 0;
+  const counterAmt = amtNum * rateNum;
+  const fmtAmt = amtNum.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const fmtCounter = counterAmt.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  document.getElementById('rateSuffix').textContent = ccy + '/' + ctr;
+  document.getElementById('rateHint').textContent = '1 ' + ccy + ' = ' + r + ' ' + ctr;
+  document.getElementById('settlementHint').innerHTML = 'Net settles in <b>' + sc + '</b> on value date.';
+
+  const buyLabel = side === 'buy' ? 'Buy' : 'Sell';
+  const sellLabel = side === 'buy' ? 'Sell' : 'Buy';
+  document.getElementById('previewBuy').textContent = buyLabel + ' ' + fmtAmt + ' ' + ccy;
+  document.getElementById('previewSell').textContent = sellLabel + ' ' + fmtCounter + ' ' + ctr;
+  document.getElementById('previewMeta').innerHTML = '@ ' + r + ' ' + ccy + '/' + ctr + ' &middot; settles net in <b>' + sc + '</b>';
+
+  const ft = val('fixingType');
+  document.getElementById('deliveryNote').textContent = 'Neither leg physically delivers \u2014 only a net ' + sc + ' amount flows on value date, crystallised against ' + (ft || 'PTAX') + '.';
+
+  document.getElementById('clearingVenue').disabled = !val('counterparty');
+
+  // Summary
+  document.getElementById('sPair').textContent = ccy + '/' + ctr;
+  document.getElementById('sBuy').textContent = fmtAmt + ' ' + ccy;
+  document.getElementById('sSell').textContent = fmtCounter + ' ' + ctr;
+  document.getElementById('sAgreed').textContent = r;
+  document.getElementById('sSettles').textContent = sc;
+  document.getElementById('sFixing').textContent = ft || '\u2014';
+  document.getElementById('sFixDate').textContent = val('fixingDate') || '\u2014';
+
+  const strategyEl = document.getElementById('strategy');
+  const stratText = strategyEl.options[strategyEl.selectedIndex]?.text;
+  document.getElementById('sStrategy').textContent = val('strategy') ? stratText : '\u2014';
+
+  const cptyEl = document.getElementById('counterparty');
+  const cptyText = cptyEl.options[cptyEl.selectedIndex]?.text;
+  document.getElementById('sCpty').textContent = val('counterparty') ? cptyText : '\u2014';
+
+  // Validation
+  const fields = [
+    { filled: !!val('legalEntity'), label: 'Legal Entity' },
+    { filled: !!val('strategy'), label: 'Strategy' },
+    { filled: !!val('counterparty'), label: 'Counterparty' },
+    { filled: !!val('clearingVenue'), label: 'Clearing Venue' },
+    { filled: !!val('accountingClass'), label: 'Accounting Classification' },
+    { filled: !!val('regulatoryClass'), label: 'Regulatory Classification' },
+    { filled: !!val('hedgeDesignation'), label: 'Designation of Hedge' },
+    { filled: !!val('hedgeAccountingType'), label: 'Type of Hedge Accounting' },
+    { filled: !!val('fixingType'), label: 'Fixing Type' },
+    { filled: !!val('priceSide'), label: 'Price Side' },
+    { filled: !!val('tradeDate'), label: 'Trade Date' },
+    { filled: !!val('fixingDate'), label: 'Fixing Date' },
+    { filled: !!val('valueDate'), label: 'Value Date' },
+  ];
+  const missing = fields.filter(f => !f.filled);
+  const msgEl = document.getElementById('validationMsg');
+  const bookBtn = document.getElementById('bookBtn');
+  if (missing.length > 0) {
+    msgEl.innerHTML = '<strong>' + missing.length + ' items to fix</strong> &middot; ' + missing[0].label;
+    msgEl.style.display = '';
+    bookBtn.disabled = true;
+  } else {
+    msgEl.style.display = 'none';
+    bookBtn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
