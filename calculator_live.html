@@ -379,15 +379,19 @@ function resultBox(label, value, colorCls='', sub='', highlight=''){
 }
  
 // ── Fetch live data ───────────────────────────────────────────────────────────
+async function safeJsonFetch(url){
+  const res  = await fetch(url);
+  const text = await res.text();
+  if(text.trim().startsWith('<')) throw new Error('Warehouse starting up — please retry in a moment.');
+  return JSON.parse(text);
+}
+ 
 async function loadLiveData(){
   try {
-    const [fxRes, ibrRes] = await Promise.all([
-      fetch(URL_USDCOP+'?dataset=forward_rates'),
-      fetch(URL_ASSET_SWAPS+'?dataset=ibr_swaps'),
-    ]);
- 
-    const fxJson  = await fxRes.json();
-    const ibrJson = await ibrRes.json();
+    // Sequential fetches — avoids 503 concurrency errors on cold warehouse
+    const fxJson   = await safeJsonFetch(URL_USDCOP+'?dataset=forward_rates');
+    const ibrJson  = await safeJsonFetch(URL_ASSET_SWAPS+'?dataset=ibr_swaps');
+    const sofrJson = await safeJsonFetch(URL_USDCOP+'?dataset=sofr');
  
     // ── Parse SOFR & spot from FX data ──
     if(fxJson.status==='ok'){
@@ -415,9 +419,7 @@ async function loadLiveData(){
       if(spotRow) LIVE.spotUSDCOP=parseFloat(spotRow.spot_mid);
     }
  
-    // ── Also fetch SOFR separately ──
-    const sofrRes  = await fetch(URL_USDCOP+'?dataset=sofr');
-    const sofrJson = await sofrRes.json();
+    // ── SOFR ──
     if(sofrJson.status==='ok' && sofrJson.data.length){
       // find latest SOFR entry
       const sorted=[...sofrJson.data].sort((a,b)=>{
