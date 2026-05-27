@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encaje · Legal Reserve · Treasury Colombia</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --uv:#2a1051;--uv-card:#3d1878;--uv-border:#5a2ca0;
+  --purple:#820AD1;--lp:#AA68FF;--lp-dim:#7a4ccc;
+  --off-white:#F4F4F4;--muted:#9f7fcc;--dim:#6a3fa0;
+  --green:#27c97a;--red:#f05050;--amber:#f0a050;--cyan:#38bdf8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--uv);color:var(--off-white);font-family:'Outfit',sans-serif;font-size:14px;min-height:100vh}
+
+/* ── Header ── */
+header{display:flex;align-items:center;gap:13px;padding:13px 26px;
+  background:rgba(42,16,81,.88);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--uv-border);position:sticky;top:0;z-index:100}
+.nu{font-weight:800;font-size:14px;color:var(--off-white);background:var(--purple);
+  padding:4px 10px;border-radius:6px;text-transform:lowercase;letter-spacing:-.5px}
+header h1{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.hline{width:1px;height:18px;background:var(--uv-border)}
+.dept{font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.3px}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:14px}
+.badge-static{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;
+  color:var(--muted);background:rgba(90,44,160,.2);border:1px solid var(--uv-border)}
+
+/* ── Layout ── */
+main{padding:22px 26px 40px;max-width:1440px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:6px}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.2px;color:var(--lp);
+  background:rgba(170,104,255,.1);border:1px solid rgba(170,104,255,.25);padding:2px 9px;border-radius:4px;text-transform:uppercase}
+.sec-head h2{font-size:15px;font-weight:700;letter-spacing:-.2px}
+.divider{height:1px;background:var(--uv-border);margin-bottom:22px}
+.sub-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
+  letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;padding-left:2px}
+.sub-section{margin-bottom:28px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+/* ── Cards ── */
+.card{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;padding:18px 18px 14px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.card.c-amber::before{background:linear-gradient(90deg,var(--amber) 0%,transparent 65%)}
+.card.c-green::before{background:linear-gradient(90deg,var(--green) 0%,transparent 65%)}
+.card.c-red::before{background:linear-gradient(90deg,var(--red) 0%,transparent 65%)}
+.card.c-lp::before{background:linear-gradient(90deg,var(--lp) 0%,transparent 65%)}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);margin-bottom:2px}
+.card-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);margin-bottom:12px;line-height:1.6}
+
+/* ── KPI strip ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.k-req::before{background:linear-gradient(90deg,var(--amber) 0%,transparent 65%)}
+.kpi.k-avg::before{background:linear-gradient(90deg,var(--lp) 0%,transparent 65%)}
+.kpi.k-exc::before{background:linear-gradient(90deg,var(--green) 0%,transparent 65%)}
+.kpi.k-days::before{background:linear-gradient(90deg,var(--cyan) 0%,transparent 65%)}
+.kpi-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px}
+.kpi-val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;margin-bottom:3px}
+.kpi-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);margin-top:3px}
+
+/* ── Status banner ── */
+.status-banner{display:flex;align-items:center;gap:14px;padding:14px 20px;border-radius:12px;margin-bottom:14px}
+.status-banner.ok{background:rgba(39,201,122,.07);border:1px solid rgba(39,201,122,.3)}
+.status-banner.warn{background:rgba(240,80,80,.07);border:1px solid rgba(240,80,80,.3)}
+.status-banner.ongoing{background:rgba(240,160,80,.07);border:1px solid rgba(240,160,80,.3)}
+.s-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.s-dot.ok{background:var(--green);box-shadow:0 0 8px var(--green)}
+.s-dot.warn{background:var(--red);box-shadow:0 0 8px var(--red)}
+.s-dot.ongoing{background:var(--amber);box-shadow:0 0 8px var(--amber);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.s-title{font-size:15px;font-weight:700}
+.s-title.ok{color:var(--green)}
+.s-title.warn{color:var(--red)}
+.s-title.ongoing{color:var(--amber)}
+.s-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+.s-coverage{margin-left:auto;text-align:right}
+.s-cov-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700}
+.s-cov-val.ok{color:var(--green)}
+.s-cov-val.warn{color:var(--red)}
+.s-cov-val.ongoing{color:var(--amber)}
+.s-cov-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim)}
+
+/* ── Progress bar ── */
+.prog-wrap{margin-bottom:16px}
+.prog-meta{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:5px}
+.prog-track{height:10px;background:rgba(90,44,160,.3);border-radius:5px;position:relative;overflow:visible}
+.prog-fill{height:100%;border-radius:5px;transition:width .6s ease;position:absolute;top:0;left:0}
+.prog-fill.ok{background:linear-gradient(90deg,#1fa866,var(--green))}
+.prog-fill.warn{background:linear-gradient(90deg,#c03030,var(--red))}
+.prog-fill.ongoing{background:linear-gradient(90deg,#c08020,var(--amber))}
+.prog-req-marker{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--amber);border-radius:1px;z-index:2}
+.prog-req-lbl{position:absolute;top:-18px;font-family:'JetBrains Mono',monospace;font-size:7px;
+  color:var(--amber);transform:translateX(-50%);white-space:nowrap}
+
+/* ── Cycle info bar ── */
+.cycle-bar{display:flex;gap:10px;flex-wrap:wrap;background:rgba(42,16,81,.5);
+  border:1px solid var(--uv-border);border-radius:10px;padding:10px 16px;margin-bottom:14px}
+.cyc-item{display:flex;flex-direction:column;gap:2px}
+.cyc-label{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--dim)}
+.cyc-val{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--off-white)}
+.cyc-sep{width:1px;background:var(--uv-border);margin:0 4px;align-self:stretch}
+
+/* ── Minimum required calculator ── */
+.min-req-box{background:rgba(240,160,80,.06);border:1px solid rgba(240,160,80,.25);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+.min-req-title{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--amber);margin-bottom:8px}
+.min-req-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.min-req-item{display:flex;flex-direction:column;gap:2px}
+.min-req-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim)}
+.min-req-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--amber)}
+.min-req-val.safe{color:var(--green)}
+.min-req-val.tight{color:var(--red)}
+
+/* ── Daily bar chart ── */
+.daily-wrap{overflow-x:auto}
+.daily-chart{display:flex;gap:3px;align-items:flex-end;height:70px;position:relative;padding-bottom:2px}
+.d-bar{flex:1;min-width:10px;border-radius:2px 2px 0 0;cursor:default;position:relative;transition:opacity .15s}
+.d-bar:hover{opacity:.75}
+.d-bar.ok{background:rgba(170,104,255,.65)}
+.d-bar.low{background:rgba(240,80,80,.75)}
+.d-req-line{position:absolute;left:0;right:0;height:2px;background:rgba(240,160,80,.9);pointer-events:none;z-index:1}
+.daily-labels{display:flex;gap:3px;margin-top:3px}
+.d-lbl{flex:1;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--dim);text-align:center}
+.daily-legend{display:flex;gap:12px;margin-top:6px}
+.d-leg{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.d-leg-dot{width:8px;height:8px;border-radius:2px}
+
+/* ── Selector pills (period nav) ── */
+
+/* ── Period selector bar ── */
+.sel-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--uv-card);border:1px solid var(--uv-border);
+  border-radius:10px;padding:10px 16px;margin-bottom:20px}
+.sel-bar label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap}
+.sel-select{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+  background:rgba(170,104,255,.08);border:1px solid var(--uv-border);color:var(--off-white);
+  padding:6px 12px;border-radius:8px;cursor:pointer;outline:none;transition:border-color .2s;
+  flex:1;min-width:220px;max-width:420px}
+.sel-select:focus,.sel-select:hover{border-color:var(--lp)}
+.sel-select option{background:#3d1878;color:var(--off-white)}
+.sel-nav{display:flex;gap:4px}
+.snav{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  background:transparent;border:1px solid var(--uv-border);color:var(--muted);
+  padding:5px 10px;border-radius:7px;cursor:pointer;transition:all .15s;line-height:1}
+.snav:hover{border-color:var(--lp);color:var(--lp)}
+.snav:disabled{opacity:.3;cursor:default}
+.sel-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;
+  white-space:nowrap;margin-left:auto}
+.sel-badge.ok{color:var(--green);background:rgba(39,201,122,.1);border:1px solid rgba(39,201,122,.2)}
+.sel-badge.warn{color:var(--red);background:rgba(240,80,80,.1);border:1px solid rgba(240,80,80,.2)}
+.sel-badge.ongoing{color:var(--amber);background:rgba(240,160,80,.1);border:1px solid rgba(240,160,80,.2)}
+.hist-table tbody tr{cursor:pointer}
+.hist-table tbody tr.active-row td{background:rgba(170,104,255,.1);border-left:2px solid var(--lp)}
+
+.period-nav{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.period-nav label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.pnav-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  background:transparent;border:1px solid var(--uv-border);color:var(--muted);
+  padding:5px 10px;border-radius:7px;cursor:pointer;transition:all .15s;line-height:1}
+.pnav-btn:hover{border-color:var(--lp);color:var(--lp)}
+.pnav-btn:disabled{opacity:.3;cursor:default}
+.period-disp{font-family:'JetBrains Mono',monospace;font-size:10px;
+  background:rgba(170,104,255,.08);border:1px solid var(--uv-border);
+  padding:5px 14px;border-radius:7px;color:var(--off-white);font-weight:600}
+
+/* ── History table ── */
+.hist-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:10px}
+.hist-table th{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--dim);padding:6px 8px;text-align:left;border-bottom:1px solid var(--uv-border);white-space:nowrap}
+.hist-table th:not(:first-child){text-align:right}
+.hist-table td{padding:6px 8px;border-bottom:1px solid rgba(90,44,160,.2);vertical-align:middle}
+.hist-table td:not(:first-child){text-align:right}
+.hist-table tbody tr:hover td{background:rgba(170,104,255,.04)}
+.hist-table tbody tr:last-child td{border-bottom:none}
+.hist-table tbody tr.active-row td{background:rgba(170,104,255,.08)}
+.enc-badge{display:inline-flex;align-items:center;font-size:8px;font-weight:700;
+  padding:2px 7px;border-radius:3px;white-space:nowrap}
+.enc-badge.ok{color:var(--green);background:rgba(39,201,122,.1);border:1px solid rgba(39,201,122,.2)}
+.enc-badge.warn{color:var(--red);background:rgba(240,80,80,.1);border:1px solid rgba(240,80,80,.2)}
+.enc-badge.partial{color:var(--amber);background:rgba(240,160,80,.1);border:1px solid rgba(240,160,80,.2)}
+
+/* ── Chart panel ── */
+.panel{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;padding:18px 18px 14px}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:8px;flex-wrap:wrap}
+.ptitle{font-size:13px;font-weight:700;letter-spacing:-.15px}
+.psub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px}
+.cwrap{position:relative;height:240px}
+.range-pills{display:flex;gap:4px}
+.rpill{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:2px 7px;
+  border-radius:20px;cursor:pointer;border:1px solid var(--uv-border);background:transparent;
+  color:var(--dim);transition:all .15s}
+.rpill:hover{border-color:var(--lp-dim);color:var(--muted)}
+.rpill.on{border-color:rgba(170,104,255,.5);background:rgba(170,104,255,.07);color:var(--muted)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.leg-item{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
+  text-align:center;padding:20px 26px 14px;border-top:1px solid var(--uv-border);margin-top:8px}
+.hidden{display:none!important}
+@media(max-width:900px){main{padding:12px}.kpi-strip,.two-col,.three-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nu">nu</div>
+  <h1>Treasury's Market Data</h1>
+  <div class="hline"></div>
+  <span class="dept">Treasury · Colombia</span>
+  <div class="hmeta">
+    <span id="cache-badge" class="badge-static" style="display:none"></span>
+    <button onclick="loadData(true)" style="background:transparent;border:1px solid var(--uv-border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'Outfit',sans-serif;transition:all .2s" onmouseover="this.style.borderColor='var(--lp)';this.style.color='var(--lp)'" onmouseout="this.style.borderColor='var(--uv-border)';this.style.color='var(--muted)'">↻ Refresh</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- Loading state -->
+  <div id="loading-state" style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;padding:80px 40px;border:1px solid var(--uv-border);border-radius:14px;margin-bottom:20px">
+    <div style="width:36px;height:36px;border:3px solid var(--uv-border);border-top-color:var(--lp);
+      border-radius:50%;animation:spin .8s linear infinite"></div>
+    <span style="font-size:15px;font-weight:600">Loading Encaje Data…</span>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Connecting to Databricks</p>
+  </div>
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  <!-- Error state -->
+  <div id="error-state" style="display:none;flex-direction:column;align-items:center;gap:12px;
+    padding:60px 40px;border:1px solid rgba(240,80,80,.25);border-radius:14px;background:rgba(240,80,80,.05)">
+    <span style="font-size:26px">⚠️</span>
+    <span style="font-size:15px;font-weight:600">Could not load data</span>
+    <pre id="error-detail" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);
+      background:rgba(240,80,80,.07);padding:10px 14px;border-radius:6px;max-width:500px;white-space:pre-wrap"></pre>
+    <button onclick="loadData(true)" style="background:rgba(170,104,255,.1);border:1px solid var(--lp-dim);
+      color:var(--lp);padding:7px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'Outfit',sans-serif;font-weight:600">
+      ↻ Retry
+    </button>
+  </div>
+
+  <!-- Dashboard (hidden until data loads) -->
+  <div id="dashboard">
+  <div class="sec-head">
+    <span class="sec-num">SECTION 06</span>
+    <h2>Encaje · Legal Reserve</h2>
+  </div>
+  <div class="divider"></div>
+
+  <!-- 01: Current period overview -->
+  <div class="sub-section">
+    <div class="sub-label">01 &nbsp;—&nbsp; Period Analysis</div>
+
+    <!-- Period selector bar -->
+    <div class="sel-bar">
+      <label>Window</label>
+      <select id="period-select" class="sel-select"></select>
+      <div class="sel-nav">
+        <button class="snav" id="btn-prev">◀</button>
+        <button class="snav" id="btn-next">▶</button>
+        <button class="snav" id="btn-latest">Latest</button>
+      </div>
+      <span id="sel-badge" class="sel-badge ongoing">—</span>
+    </div>
+
+    <!-- Status banner -->
+    <div id="status-banner" class="status-banner ongoing">
+      <div id="s-dot" class="s-dot ongoing"></div>
+      <div>
+        <div id="s-title" class="s-title ongoing">—</div>
+        <div id="s-sub" class="s-sub">—</div>
+      </div>
+      <div class="s-coverage">
+        <div id="s-cov-val" class="s-cov-val ongoing">—</div>
+        <div class="s-cov-lbl">coverage of requirement</div>
+      </div>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="kpi-strip">
+      <div class="kpi k-req">
+        <div class="kpi-label">Required (avg)</div>
+        <div class="kpi-val" style="color:var(--amber)" id="kpi-req">—</div>
+        <div class="kpi-sub" id="kpi-req-sub">MM COP</div>
+      </div>
+      <div class="kpi k-avg">
+        <div class="kpi-label">Actual Avg Balance</div>
+        <div class="kpi-val" style="color:var(--lp)" id="kpi-avg">—</div>
+        <div class="kpi-sub" id="kpi-avg-sub">CUD + MOL · MM COP</div>
+      </div>
+      <div class="kpi k-exc">
+        <div class="kpi-label">Excess / Deficit</div>
+        <div class="kpi-val" id="kpi-exc">—</div>
+        <div class="kpi-sub" id="kpi-exc-sub">vs required</div>
+      </div>
+      <div class="kpi k-days">
+        <div class="kpi-label">Days Remaining</div>
+        <div class="kpi-val" style="color:var(--cyan)" id="kpi-days">—</div>
+        <div class="kpi-sub" id="kpi-days-sub">in compliance window</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="prog-wrap">
+      <div class="prog-meta">
+        <span style="color:var(--dim)">0 MM</span>
+        <span id="prog-pct-lbl" style="color:var(--muted)">—</span>
+      </div>
+      <div class="prog-track" id="prog-track" style="height:12px">
+        <div class="prog-fill ongoing" id="prog-fill" style="width:0%"></div>
+        <div class="prog-req-marker" id="prog-req-marker" style="left:100%">
+          <div class="prog-req-lbl">required</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cycle info bar -->
+    <div class="cycle-bar">
+      <div class="cyc-item">
+        <span class="cyc-label">Measurement Window</span>
+        <span class="cyc-val" id="cyc-req-window">—</span>
+      </div>
+      <div class="cyc-sep"></div>
+      <div class="cyc-item">
+        <span class="cyc-label">Compliance Window</span>
+        <span class="cyc-val" id="cyc-disp-window">—</span>
+      </div>
+      <div class="cyc-sep"></div>
+      <div class="cyc-item">
+        <span class="cyc-label">Days Elapsed</span>
+        <span class="cyc-val" id="cyc-elapsed">—</span>
+      </div>
+      <div class="cyc-sep"></div>
+      <div class="cyc-item">
+        <span class="cyc-label">Days Remaining</span>
+        <span class="cyc-val" id="cyc-remaining">—</span>
+      </div>
+      <div class="cyc-sep"></div>
+      <div class="cyc-item">
+        <span class="cyc-label">Transmisión Max</span>
+        <span class="cyc-val" id="cyc-transmision">—</span>
+      </div>
+    </div>
+
+    <!-- Min required box -->
+    <div class="min-req-box">
+      <div class="min-req-title">⚡ Forward-Looking · Minimum Required for Remaining Days</div>
+      <div class="min-req-grid">
+        <div class="min-req-item">
+          <span class="min-req-lbl">Accumulated avg so far</span>
+          <span class="min-req-val" id="fwd-acc">—</span>
+        </div>
+        <div class="min-req-item">
+          <span class="min-req-lbl">Days remaining in window</span>
+          <span class="min-req-val" id="fwd-days-rem">—</span>
+        </div>
+        <div class="min-req-item">
+          <span class="min-req-lbl">Min daily balance needed</span>
+          <span class="min-req-val" id="fwd-min-daily">—</span>
+        </div>
+        <div class="min-req-item">
+          <span class="min-req-lbl">Already compliant?</span>
+          <span class="min-req-val" id="fwd-already">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily bar chart -->
+    <div class="card c-amber">
+      <div class="card-title">📊 Daily CUD+MOL Balance vs Required Level</div>
+      <div class="card-sub" id="daily-sub">Current compliance window</div>
+      <div class="daily-wrap">
+        <div class="daily-chart" id="daily-bars"></div>
+        <div class="daily-labels" id="daily-labels"></div>
+      </div>
+      <div class="daily-legend">
+        <div class="d-leg"><div class="d-leg-dot" style="background:rgba(170,104,255,.65)"></div>Above required</div>
+        <div class="d-leg"><div class="d-leg-dot" style="background:rgba(240,80,80,.75)"></div>Below required</div>
+        <div class="d-leg"><div class="d-leg-dot" style="background:var(--amber);height:2px;border-radius:0"></div>Required level</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02: History table + excess/deficit chart -->
+  <div class="sub-section">
+    <div class="sub-label">02 &nbsp;—&nbsp; Compliance History</div>
+    <div class="two-col">
+
+      <!-- History table -->
+      <div class="card c-lp">
+        <div class="card-title">📋 All Periods · Summary</div>
+        <div class="card-sub">Biweekly compliance windows · newest first</div>
+        <div style="max-height:340px;overflow-y:auto;overflow-x:auto">
+        <table class="hist-table">
+          <thead>
+            <tr>
+              <th style="position:sticky;top:0;background:var(--uv-card);z-index:1">Disponible window</th>
+              <th style="position:sticky;top:0;background:var(--uv-card);z-index:1">Required</th>
+              <th style="position:sticky;top:0;background:var(--uv-card);z-index:1">Avg CB</th>
+              <th style="position:sticky;top:0;background:var(--uv-card);z-index:1">Excess (MM)</th>
+              <th style="position:sticky;top:0;background:var(--uv-card);z-index:1">Coverage %</th>
+              <th style="position:sticky;top:0;background:var(--uv-card);z-index:1">Status</th>
+            </tr>
+          </thead>
+          <tbody id="hist-body"></tbody>
+        </table>
+        </div>
+      </div>
+
+      <!-- Excess/deficit chart (absolute) -->
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="ptitle">Historical Excess / Deficit</div>
+            <div class="psub">Avg CUD+MOL minus required · MM COP per period</div>
+          </div>
+          <div class="range-pills" id="range-exc"></div>
+        </div>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Excess (compliant)</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>Deficit (breach)</div>
+        </div>
+        <div class="cwrap" style="height:300px"><canvas id="c-exc"></canvas></div>
+      </div>
+
+    </div>
+
+    <!-- Relative excess/deficit chart (%) — full width -->
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-head">
+        <div>
+          <div class="ptitle">Historical Coverage · Relative Excess / Deficit</div>
+          <div class="psub">Avg CUD+MOL as % of required · 100% = exactly at requirement</div>
+        </div>
+        <div class="range-pills" id="range-pct"></div>
+      </div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Above 100% (compliant)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>Below 100% (breach)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--amber);height:2px;border-radius:0"></div>100% required</div>
+      </div>
+      <div class="cwrap" style="height:300px"><canvas id="c-pct"></canvas></div>
+    </div>
+
+  </div>
+
+  <!-- 04: Full historical daily chart -->
+  <div class="sub-section">
+    <div class="sub-label">03 &nbsp;—&nbsp; Historical Daily Balance vs Required</div>
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="ptitle">Daily CUD+MOL vs Required Level</div>
+          <div class="psub">Full history · MM COP · required steps reflect each biweekly period</div>
+        </div>
+        <div class="range-pills" id="range-daily"></div>
+      </div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--lp)"></div>CUD+MOL Balance</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--amber)"></div>Required Level</div>
+      </div>
+      <div class="cwrap" style="height:280px"><canvas id="c-daily"></canvas></div>
+    </div>
+  </div>
+
+  </div><!-- /dashboard -->
+</main>
+
+<footer>Nubank · Colombia Treasury ALM · Encaje — Banco de la República · v_portfolio_completo</footer>
+
+<script>
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║  Paste your Apps Script deployment URL here                             ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5izc_EfJ0bBHeq1qnxejantKRf9Btw9FjBbpzevRaRLpy9km-K5RBdFd7bwiRYUkbSQ/exec';
+
+let DATA = null;  // populated after fetch
+
+async function loadData(forceRefresh = false) {
+  showLoading(true);
+  try {
+    const suffix = forceRefresh ? '&nocache=' + Date.now() : '';
+    const res    = await fetch(APPS_SCRIPT_URL + '?dataset=encaje' + suffix);
+    const json   = await res.json();
+    if (json.status !== 'ok') throw new Error(json.message);
+
+    DATA = json;
+
+    // Update cache badge
+    const badge = document.getElementById('cache-badge');
+    if (badge) {
+      badge.textContent  = json.cached ? '◌ cached' : '⬤ live';
+      badge.className    = 'badge-static ' + (json.cached ? '' : 'badge-live');
+      badge.style.display = '';
+    }
+
+    showLoading(false);
+    bootPage();
+
+  } catch (err) {
+    showLoading(false);
+    showError(err.message);
+  }
+}
+
+function showLoading(on) {
+  const el = document.getElementById('loading-state');
+  if (el) el.style.display = on ? 'flex' : 'none';
+  const dash = document.getElementById('dashboard');
+  if (dash) dash.style.display = on ? 'none' : '';
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-state');
+  if (el) {
+    el.style.display = 'flex';
+    const detail = document.getElementById('error-detail');
+    if (detail) detail.textContent = msg;
+  }
+}
+
+// TODAY is dynamic — use getToday() // last date with data
+const RANGES = [{label:'ALL',days:null},{label:'1Y',days:365},{label:'6M',days:180},{label:'3M',days:90}];
+
+let activePeriodIdx = DATA.periods.length - 1;
+let activeRngExc = 'ALL', activeRngPct = 'ALL', activeRngDaily = '1Y';
+let cExc = null, cPct = null, cDaily = null;
+
+const $ = id => document.getElementById(id);
+
+function fmtMM(v){ return (v/1e9).toFixed(1)+' MM'; }
+function fmtMMno(v){ return (v/1e9).toFixed(1); }
+
+function daysUntil(dateStr){
+  const d = new Date(dateStr); const t = new Date(getToday());
+  return Math.round((d - t) / 86400000);
+}
+function daysElapsed(startStr){
+  const s = new Date(startStr); const t = new Date(getToday());
+  return Math.max(0, Math.round((t - s) / 86400000) + 1);
+}
+function totalWindowDays(p){
+  const s = new Date(p.disp_start); const e = new Date(p.disp_end);
+  return Math.round((e - s) / 86400000) + 1;
+}
+
+// ── Current period (always show the latest) ───────────────────────────────────
+function renderPeriodPanel(p){
+  const req = p.required, avg = p.avg_cb, exc = p.excess;
+  const ok  = p.compliant;
+  const days = Object.keys(p.daily).length;
+  const totalDays = totalWindowDays(p);
+  const remaining = Math.max(0, totalDays - days);
+  const isOngoing = days < totalDays;
+
+  const statusCls = ok ? 'ok' : isOngoing ? 'ongoing' : 'warn';
+  const statusTxt = ok ? '✓ COMPLIANT' : isOngoing ? '⏳ PERIOD IN PROGRESS' : '✗ REGULATORY BREACH';
+
+  $('status-banner').className = 'status-banner ' + statusCls;
+  $('s-dot').className         = 's-dot ' + statusCls;
+  $('s-title').className       = 's-title ' + statusCls;
+  $('s-title').textContent     = statusTxt;
+  $('s-sub').textContent       = `Compliance window: ${p.disp_start} → ${p.disp_end} · ${days} of ${totalDays} days recorded`;
+  $('s-cov-val').className     = 's-cov-val ' + statusCls;
+  $('s-cov-val').textContent   = (avg/req*100).toFixed(1) + '%';
+
+  // KPIs
+  $('kpi-req').textContent = fmtMM(req);
+  $('kpi-avg').textContent = fmtMM(avg);
+  const excEl = $('kpi-exc');
+  excEl.textContent = (exc>=0?'+':'')+fmtMM(exc);
+  excEl.style.color = exc>=0?'var(--green)':'var(--red)';
+  $('kpi-exc-sub').textContent = `${exc>=0?'+':''}${(exc/req*100).toFixed(1)}% of required`;
+  $('kpi-days').textContent = remaining;
+  $('kpi-days-sub').textContent = remaining===0 ? 'Period complete' : `of ${totalDays} total`;
+
+  // Progress bar
+  const maxBar = Math.max(avg, req);
+  const fillPct = Math.min(100, avg/maxBar*100);
+  const reqPct  = Math.min(100, req/maxBar*100);
+  const fillEl  = $('prog-fill');
+  fillEl.style.width   = fillPct + '%';
+  fillEl.className     = 'prog-fill ' + statusCls;
+  $('prog-req-marker').style.left = reqPct + '%';
+  $('prog-pct-lbl').textContent   = fmtMM(avg) + ' of ' + fmtMM(req) + ' required';
+
+  // Cycle bar
+  $('cyc-req-window').textContent  = `${p.req_start} → ${p.req_end}`;
+  $('cyc-disp-window').textContent = `${p.disp_start} → ${p.disp_end}`;
+  $('cyc-elapsed').textContent     = `${days} day${days!==1?'s':''}`;
+  $('cyc-remaining').textContent   = `${remaining} day${remaining!==1?'s':''}`;
+  $('cyc-transmision').textContent = p.transmision || '—';
+
+  // Forward-looking min daily needed
+  const accSum    = Object.values(p.daily).reduce((s,v)=>s+v,0);
+  const needed    = req * totalDays - accSum;
+  const minDaily  = remaining > 0 ? needed / remaining : 0;
+  const alreadyOk = minDaily <= 0;
+  $('fwd-acc').textContent      = fmtMM(accSum / days) + ' so far';
+  $('fwd-days-rem').textContent = remaining + ' day' + (remaining!==1?'s':'');
+  const minEl = $('fwd-min-daily');
+  minEl.textContent  = alreadyOk ? 'N/A — already secure' : fmtMM(Math.max(0, minDaily));
+  minEl.className    = 'min-req-val ' + (alreadyOk ? 'safe' : minDaily > avg*1.5 ? 'tight' : '');
+  $('fwd-already').textContent = alreadyOk ? '✓ Yes — even with 0 remaining' : '✗ Not yet';
+  $('fwd-already').style.color = alreadyOk ? 'var(--green)' : 'var(--amber)';
+
+  // Daily bars
+  renderDailyBars(p, 'daily-bars', 'daily-labels');
+  $('daily-sub').textContent = `${p.disp_start} → ${p.disp_end} · ${days} days recorded`;
+}
+
+function renderDailyBars(p, barsId, lblsId){
+  const dayEntries = Object.entries(p.daily).sort((a,b)=>a[0].localeCompare(b[0]));
+  const req = p.required;
+  const maxVal = Math.max(...dayEntries.map(d=>d[1]), req);
+  const reqH = Math.round((req/maxVal)*66);
+
+  let bHTML='', lHTML='';
+  dayEntries.forEach(([d,val])=>{
+    const h   = Math.max(3, Math.round((val/maxVal)*66));
+    const cls = val>=req?'ok':'low';
+    bHTML+=`<div class="d-bar ${cls}" style="height:${h}px" title="${d}: ${fmtMM(val)}">
+      <div class="d-req-line" style="bottom:${reqH}px"></div>
+    </div>`;
+    lHTML+=`<div class="d-lbl">${d.slice(8)}</div>`;
+  });
+  $(barsId).innerHTML = bHTML;
+  $(lblsId).innerHTML = lHTML;
+}
+
+// ── Period navigator ──────────────────────────────────────────────────────────
+function setActivePeriod(idx){
+  activePeriodIdx = Math.max(0, Math.min(DATA.periods.length-1, idx));
+  const p = DATA.periods[activePeriodIdx];
+
+  // Sync dropdown
+  $('period-select').value = activePeriodIdx;
+
+  // Nav buttons
+  $('btn-prev').disabled   = activePeriodIdx === 0;
+  $('btn-next').disabled   = activePeriodIdx === DATA.periods.length-1;
+  $('btn-latest').disabled = activePeriodIdx === DATA.periods.length-1;
+
+  // Highlight active row in table
+  document.querySelectorAll('.hist-table tbody tr').forEach((tr,i)=>{
+    const mirrorIdx = DATA.periods.length - 1 - i;
+    tr.classList.toggle('active-row', mirrorIdx === activePeriodIdx);
+  });
+
+  // Update the full period analysis panel
+  renderPeriodPanel(p);
+  updateSelectorBadge(p);
+}
+$('btn-prev').onclick   = () => setActivePeriod(activePeriodIdx - 1);
+$('btn-next').onclick   = () => setActivePeriod(activePeriodIdx + 1);
+$('btn-latest').onclick = () => setActivePeriod(DATA.periods.length - 1);
+
+// ── History table ─────────────────────────────────────────────────────────────
+function renderHistTable(){
+  let rows='';
+  [...DATA.periods].reverse().forEach((p,i)=>{
+    const n = Object.keys(p.daily).length;
+    const totalDays = totalWindowDays(p);
+    const isOngoing = n < totalDays;
+    const badge = p.compliant
+      ? '<span class="enc-badge ok">✓ OK</span>'
+      : isOngoing
+        ? '<span class="enc-badge partial">⏳ Ongoing</span>'
+        : '<span class="enc-badge warn">✗ BREACH</span>';
+    const excSign  = p.excess>=0?'+':'';
+    const excColor = p.excess>=0?'var(--green)':'var(--red)';
+    const covColor = p.coverage_pct>=100?'var(--green)':p.coverage_pct>=90?'var(--amber)':'var(--red)';
+    rows+=`<tr onclick='setActivePeriod(${DATA.periods.length-1-i})'>
+      <td style="font-size:9px;color:var(--muted)">${p.disp_start} → ${p.disp_end.slice(5)}</td>
+      <td style="color:var(--amber)">${fmtMMno(p.required)}</td>
+      <td style="color:var(--lp)">${fmtMMno(p.avg_cb)}</td>
+      <td style="color:${excColor}">${excSign}${fmtMMno(p.excess)}</td>
+      <td style="color:${covColor};font-weight:700">${p.coverage_pct!=null?p.coverage_pct.toFixed(1)+'%':'—'}</td>
+      <td>${badge}</td>
+    </tr>`;
+  });
+  $('hist-body').innerHTML = rows;
+}
+
+// ── Charts ────────────────────────────────────────────────────────────────────
+function slicePeriods(label){
+  const days = RANGES.find(r=>r.label===label)?.days;
+  if(!days) return DATA.periods;
+  const cutoff = new Date(getToday()); cutoff.setDate(cutoff.getDate()-days);
+  const co = cutoff.toISOString().slice(0,10);
+  return DATA.periods.filter(p=>p.disp_end >= co);
+}
+function sliceSeries(label){
+  const days = RANGES.find(r=>r.label===label)?.days;
+  if(!days) return DATA.daily_series;
+  const cutoff = new Date(getToday()); cutoff.setDate(cutoff.getDate()-days);
+  const co = cutoff.toISOString().slice(0,10);
+  return DATA.daily_series.filter(d=>d.date >= co);
+}
+
+function renderExcChart(){
+  const ps = slicePeriods(activeRngExc).filter(p=>Object.keys(p.daily).length>0);
+  if(cExc) cExc.destroy();
+  cExc = new Chart($('c-exc').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels: ps.map(p=>p.disp_start.slice(5)),
+      datasets:[{
+        label:'Excess / Deficit',
+        data: ps.map(p=>p.excess/1e9),
+        backgroundColor: ps.map(p=>p.excess>=0?'rgba(39,201,122,.6)':'rgba(240,80,80,.6)'),
+        borderColor:     ps.map(p=>p.excess>=0?'rgba(39,201,122,.9)':'rgba(240,80,80,.9)'),
+        borderWidth:1, borderRadius:3, maxBarThickness:28,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, animation:{duration:300},
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:'#3d1878',borderColor:'#5a2ca0',borderWidth:1,
+          titleColor:'#9f7fcc',bodyColor:'#F4F4F4',
+          titleFont:{family:"'JetBrains Mono',monospace",size:10},
+          bodyFont:{family:"'JetBrains Mono',monospace",size:11},
+          callbacks:{
+            title: items => {
+              const p = ps[items[0].dataIndex];
+              return `${p.disp_start} → ${p.disp_end.slice(5)}`;
+            },
+            label: ctx => {
+              const p = ps[ctx.dataIndex];
+              const sign = ctx.parsed.y>=0?'+':'';
+              return [
+                ` Excess: ${sign}${ctx.parsed.y.toFixed(1)} MM`,
+                ` Coverage: ${p.coverage_pct!=null?p.coverage_pct.toFixed(1)+'%':'—'}`,
+              ];
+            }
+          }
+        }
+      },
+      scales:{
+        x:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:8},maxRotation:45,maxTicksLimit:20},
+           grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}},
+        y:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(0)+' MM'},
+           grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'},
+           afterDataLimits(scale){ scale.min=Math.min(scale.min,0); }}
+      }
+    }
+  });
+}
+
+
+function renderPctChart(){
+  const ps = slicePeriods(activeRngPct).filter(p=>Object.keys(p.daily).length>0);
+  if(cPct) cPct.destroy();
+  cPct = new Chart($('c-pct').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels: ps.map(p=>p.disp_start.slice(5)),
+      datasets:[
+        {
+          label:'Coverage %',
+          data: ps.map(p=>p.coverage_pct),
+          backgroundColor: ps.map(p=>(p.coverage_pct||0)>=100?'rgba(39,201,122,.6)':'rgba(240,80,80,.6)'),
+          borderColor:     ps.map(p=>(p.coverage_pct||0)>=100?'rgba(39,201,122,.9)':'rgba(240,80,80,.9)'),
+          borderWidth:1, borderRadius:3, maxBarThickness:28,
+        },
+        {
+          label:'Required (100%)',
+          data: ps.map(()=>100),
+          type:'line',
+          borderColor:'rgba(240,160,80,.8)',
+          borderWidth:2,
+          borderDash:[4,3],
+          pointRadius:0,
+          fill:false,
+          order:0,
+        }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, animation:{duration:300},
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:'#3d1878',borderColor:'#5a2ca0',borderWidth:1,
+          titleColor:'#9f7fcc',bodyColor:'#F4F4F4',
+          titleFont:{family:"'JetBrains Mono',monospace",size:10},
+          bodyFont:{family:"'JetBrains Mono',monospace",size:11},
+          callbacks:{
+            title: items => {
+              const p = ps[items[0].dataIndex];
+              return `${p.disp_start} → ${p.disp_end.slice(5)}`;
+            },
+            label: ctx => {
+              if(ctx.datasetIndex===1) return null;
+              const p = ps[ctx.dataIndex];
+              const sign = p.excess>=0?'+':'';
+              return [
+                ` Coverage: ${ctx.parsed.y.toFixed(1)}%`,
+                ` Excess: ${sign}${(p.excess/1e9).toFixed(1)} MM`,
+              ];
+            }
+          }
+        }
+      },
+      scales:{
+        x:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:8},maxRotation:45,maxTicksLimit:20},
+           grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}},
+        y:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(0)+'%'},
+           grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'},
+           afterDataLimits(scale){ scale.min=Math.min(scale.min-5, 80); }}
+      }
+    }
+  });
+}
+
+function renderDailyChart(){
+  const series = sliceSeries(activeRngDaily);
+  if(cDaily) cDaily.destroy();
+  cDaily = new Chart($('c-daily').getContext('2d'),{
+    type:'line',
+    data:{
+      labels: series.map(d=>d.date),
+      datasets:[
+        {label:'CUD+MOL', data:series.map(d=>d.cb/1e9),
+         borderColor:'#AA68FF',backgroundColor:'rgba(170,104,255,.08)',
+         borderWidth:2,pointRadius:0,tension:.3,fill:true,order:2},
+        {label:'Required', data:series.map(d=>d.req/1e9),
+         borderColor:'#f0a050',backgroundColor:'transparent',
+         borderWidth:2,pointRadius:0,tension:0,borderDash:[4,3],fill:false,order:1},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, animation:{duration:300},
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:'#3d1878',borderColor:'#5a2ca0',borderWidth:1,
+          titleColor:'#9f7fcc',bodyColor:'#F4F4F4',
+          titleFont:{family:"'JetBrains Mono',monospace",size:10},
+          bodyFont:{family:"'JetBrains Mono',monospace",size:11},
+          callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} MM`}
+        }
+      },
+      scales:{
+        x:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:9},maxTicksLimit:10,maxRotation:0},
+           grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}},
+        y:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(0)+' MM'},
+           grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}}
+      }
+    }
+  });
+}
+
+// ── Range pills ───────────────────────────────────────────────────────────────
+function buildRangePills(){
+  function make(containerId, active, setter){
+    $(containerId).innerHTML='';
+    RANGES.forEach(r=>{
+      const b=document.createElement('button');
+      b.className='rpill'+(r.label===active?' on':'');
+      b.textContent=r.label;
+      b.onclick=()=>{
+        setter(r.label);
+        $(containerId).querySelectorAll('.rpill').forEach(x=>x.classList.toggle('on',x.textContent===r.label));
+      };
+      $(containerId).appendChild(b);
+    });
+  }
+  make('range-exc',   activeRngExc,   v=>{ activeRngExc=v;   renderExcChart(); });
+  make('range-pct',   activeRngPct,   v=>{ activeRngPct=v;   renderPctChart(); });
+  make('range-daily', activeRngDaily, v=>{ activeRngDaily=v;  renderDailyChart(); });
+}
+
+// ── Selector ──────────────────────────────────────────────────────────────────
+function buildSelector(){
+  const sel = $('period-select');
+  sel.innerHTML = '';
+  [...DATA.periods].reverse().forEach((p, i) => {
+    const realIdx = DATA.periods.length - 1 - i;
+    const n = Object.keys(p.daily).length;
+    const totalDays = totalWindowDays(p);
+    const isOngoing = n < totalDays && !p.compliant;
+    const status = p.compliant ? '✓' : isOngoing ? '⏳' : '✗';
+    const opt = document.createElement('option');
+    opt.value = realIdx;
+    opt.textContent = `${p.disp_start}  ▶  ${p.disp_end}`;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', () => setActivePeriod(parseInt(sel.value)));
+}
+
+function updateSelectorBadge(p){
+  const n = Object.keys(p.daily).length;
+  const totalDays = totalWindowDays(p);
+  const isOngoing = n < totalDays && !p.compliant;
+  const badge = $('sel-badge');
+  if(p.compliant){
+    badge.textContent='✓ Compliant'; badge.className='sel-badge ok';
+  } else if(isOngoing){
+    badge.textContent='⏳ In Progress'; badge.className='sel-badge ongoing';
+  } else {
+    badge.textContent='✗ Breach'; badge.className='sel-badge warn';
+  }
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+Chart.defaults.color='#7a4ccc';
+Chart.defaults.borderColor='rgba(90,44,160,.4)';
+
+function bootPage(){
+  buildSelector();
+  renderHistTable();
+  buildRangePills();
+  setActivePeriod(DATA.periods.length - 1);
+  renderExcChart();
+  renderPctChart();
+  renderDailyChart();
+}
+
+// Update TODAY dynamically from data
+function getToday(){
+  if(!DATA || !DATA.daily_series || !DATA.daily_series.length) return '2026-05-04';
+  return DATA.daily_series[DATA.daily_series.length-1].date;
+}
+
+// Replace static TODAY references in functions that use it
+loadData();
+</script>
+</body>
+</html>
