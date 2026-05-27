@@ -546,7 +546,7 @@ function showError(msg) {
 // TODAY is dynamic — use getToday() // last date with data
 const RANGES = [{label:'ALL',days:null},{label:'1Y',days:365},{label:'6M',days:180},{label:'3M',days:90}];
  
-let activePeriodIdx = DATA.periods.length - 1;
+let activePeriodIdx = 0;  // set properly in bootPage()
 let activeRngExc = 'ALL', activeRngPct = 'ALL', activeRngDaily = '1Y';
 let cExc = null, cPct = null, cDaily = null;
  
@@ -932,6 +932,7 @@ Chart.defaults.color='#7a4ccc';
 Chart.defaults.borderColor='rgba(90,44,160,.4)';
  
 function bootPage(){
+  activePeriodIdx = DATA.periods.length - 1;
   buildSelector();
   renderHistTable();
   buildRangePills();
