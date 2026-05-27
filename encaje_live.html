@@ -15,7 +15,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--uv);color:var(--off-white);font-family:'Outfit',sans-serif;font-size:14px;min-height:100vh}
-
+ 
 /* ── Header ── */
 header{display:flex;align-items:center;gap:13px;padding:13px 26px;
   background:rgba(42,16,81,.88);backdrop-filter:blur(12px);
@@ -28,7 +28,9 @@ header h1{font-size:16px;font-weight:700;letter-spacing:-.3px}
 .hmeta{margin-left:auto;display:flex;align-items:center;gap:14px}
 .badge-static{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;
   color:var(--muted);background:rgba(90,44,160,.2);border:1px solid var(--uv-border)}
-
+.badge-live{color:var(--green)!important;background:rgba(39,201,122,.08)!important;border-color:rgba(39,201,122,.3)!important}
+.badge-cached{color:var(--muted)!important}
+ 
 /* ── Layout ── */
 main{padding:22px 26px 40px;max-width:1440px}
 .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:6px}
@@ -41,7 +43,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .sub-section{margin-bottom:28px}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-
+ 
 /* ── Cards ── */
 .card{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;padding:18px 18px 14px;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
@@ -51,7 +53,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .card.c-lp::before{background:linear-gradient(90deg,var(--lp) 0%,transparent 65%)}
 .card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);margin-bottom:2px}
 .card-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);margin-bottom:12px;line-height:1.6}
-
+ 
 /* ── KPI strip ── */
 .kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
 .kpi{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden}
@@ -63,7 +65,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .kpi-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px}
 .kpi-val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;margin-bottom:3px}
 .kpi-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);margin-top:3px}
-
+ 
 /* ── Status banner ── */
 .status-banner{display:flex;align-items:center;gap:14px;padding:14px 20px;border-radius:12px;margin-bottom:14px}
 .status-banner.ok{background:rgba(39,201,122,.07);border:1px solid rgba(39,201,122,.3)}
@@ -74,6 +76,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .s-dot.warn{background:var(--red);box-shadow:0 0 8px var(--red)}
 .s-dot.ongoing{background:var(--amber);box-shadow:0 0 8px var(--amber);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
 .s-title{font-size:15px;font-weight:700}
 .s-title.ok{color:var(--green)}
 .s-title.warn{color:var(--red)}
@@ -85,7 +88,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .s-cov-val.warn{color:var(--red)}
 .s-cov-val.ongoing{color:var(--amber)}
 .s-cov-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim)}
-
+ 
 /* ── Progress bar ── */
 .prog-wrap{margin-bottom:16px}
 .prog-meta{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:5px}
@@ -97,7 +100,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .prog-req-marker{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--amber);border-radius:1px;z-index:2}
 .prog-req-lbl{position:absolute;top:-18px;font-family:'JetBrains Mono',monospace;font-size:7px;
   color:var(--amber);transform:translateX(-50%);white-space:nowrap}
-
+ 
 /* ── Cycle info bar ── */
 .cycle-bar{display:flex;gap:10px;flex-wrap:wrap;background:rgba(42,16,81,.5);
   border:1px solid var(--uv-border);border-radius:10px;padding:10px 16px;margin-bottom:14px}
@@ -105,7 +108,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .cyc-label{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--dim)}
 .cyc-val{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--off-white)}
 .cyc-sep{width:1px;background:var(--uv-border);margin:0 4px;align-self:stretch}
-
+ 
 /* ── Minimum required calculator ── */
 .min-req-box{background:rgba(240,160,80,.06);border:1px solid rgba(240,160,80,.25);border-radius:10px;padding:12px 16px;margin-bottom:14px}
 .min-req-title{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--amber);margin-bottom:8px}
@@ -115,7 +118,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .min-req-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--amber)}
 .min-req-val.safe{color:var(--green)}
 .min-req-val.tight{color:var(--red)}
-
+ 
 /* ── Daily bar chart ── */
 .daily-wrap{overflow-x:auto}
 .daily-chart{display:flex;gap:3px;align-items:flex-end;height:70px;position:relative;padding-bottom:2px}
@@ -129,9 +132,9 @@ main{padding:22px 26px 40px;max-width:1440px}
 .daily-legend{display:flex;gap:12px;margin-top:6px}
 .d-leg{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);display:flex;align-items:center;gap:4px}
 .d-leg-dot{width:8px;height:8px;border-radius:2px}
-
+ 
 /* ── Selector pills (period nav) ── */
-
+ 
 /* ── Period selector bar ── */
 .sel-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   background:var(--uv-card);border:1px solid var(--uv-border);
@@ -157,7 +160,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .sel-badge.ongoing{color:var(--amber);background:rgba(240,160,80,.1);border:1px solid rgba(240,160,80,.2)}
 .hist-table tbody tr{cursor:pointer}
 .hist-table tbody tr.active-row td{background:rgba(170,104,255,.1);border-left:2px solid var(--lp)}
-
+ 
 .period-nav{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 .period-nav label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
 .pnav-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
@@ -168,7 +171,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .period-disp{font-family:'JetBrains Mono',monospace;font-size:10px;
   background:rgba(170,104,255,.08);border:1px solid var(--uv-border);
   padding:5px 14px;border-radius:7px;color:var(--off-white);font-weight:600}
-
+ 
 /* ── History table ── */
 .hist-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:10px}
 .hist-table th{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;
@@ -184,7 +187,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .enc-badge.ok{color:var(--green);background:rgba(39,201,122,.1);border:1px solid rgba(39,201,122,.2)}
 .enc-badge.warn{color:var(--red);background:rgba(240,80,80,.1);border:1px solid rgba(240,80,80,.2)}
 .enc-badge.partial{color:var(--amber);background:rgba(240,160,80,.1);border:1px solid rgba(240,160,80,.2)}
-
+ 
 /* ── Chart panel ── */
 .panel{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;padding:18px 18px 14px}
 .panel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:8px;flex-wrap:wrap}
@@ -200,7 +203,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
 .leg-item{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
 .leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-
+ 
 footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
   text-align:center;padding:20px 26px 14px;border-top:1px solid var(--uv-border);margin-top:8px}
 .hidden{display:none!important}
@@ -208,7 +211,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
 </style>
 </head>
 <body>
-
+ 
 <header>
   <div class="nu">nu</div>
   <h1>Treasury's Market Data</h1>
@@ -219,9 +222,9 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
     <button onclick="loadData(true)" style="background:transparent;border:1px solid var(--uv-border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'Outfit',sans-serif;transition:all .2s" onmouseover="this.style.borderColor='var(--lp)';this.style.color='var(--lp)'" onmouseout="this.style.borderColor='var(--uv-border)';this.style.color='var(--muted)'">↻ Refresh</button>
   </div>
 </header>
-
+ 
 <main>
-
+ 
   <!-- Loading state -->
   <div id="loading-state" style="display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:14px;padding:80px 40px;border:1px solid var(--uv-border);border-radius:14px;margin-bottom:20px">
@@ -230,8 +233,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
     <span style="font-size:15px;font-weight:600">Loading Encaje Data…</span>
     <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Connecting to Databricks</p>
   </div>
-  @keyframes spin{to{transform:rotate(360deg)}}
-
+ 
   <!-- Error state -->
   <div id="error-state" style="display:none;flex-direction:column;align-items:center;gap:12px;
     padding:60px 40px;border:1px solid rgba(240,80,80,.25);border-radius:14px;background:rgba(240,80,80,.05)">
@@ -244,19 +246,19 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
       ↻ Retry
     </button>
   </div>
-
+ 
   <!-- Dashboard (hidden until data loads) -->
-  <div id="dashboard">
+  <div id="dashboard" style="display:none">
   <div class="sec-head">
     <span class="sec-num">SECTION 06</span>
     <h2>Encaje · Legal Reserve</h2>
   </div>
   <div class="divider"></div>
-
+ 
   <!-- 01: Current period overview -->
   <div class="sub-section">
     <div class="sub-label">01 &nbsp;—&nbsp; Period Analysis</div>
-
+ 
     <!-- Period selector bar -->
     <div class="sel-bar">
       <label>Window</label>
@@ -268,7 +270,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
       </div>
       <span id="sel-badge" class="sel-badge ongoing">—</span>
     </div>
-
+ 
     <!-- Status banner -->
     <div id="status-banner" class="status-banner ongoing">
       <div id="s-dot" class="s-dot ongoing"></div>
@@ -281,7 +283,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         <div class="s-cov-lbl">coverage of requirement</div>
       </div>
     </div>
-
+ 
     <!-- KPI strip -->
     <div class="kpi-strip">
       <div class="kpi k-req">
@@ -305,7 +307,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         <div class="kpi-sub" id="kpi-days-sub">in compliance window</div>
       </div>
     </div>
-
+ 
     <!-- Progress bar -->
     <div class="prog-wrap">
       <div class="prog-meta">
@@ -319,7 +321,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         </div>
       </div>
     </div>
-
+ 
     <!-- Cycle info bar -->
     <div class="cycle-bar">
       <div class="cyc-item">
@@ -347,7 +349,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         <span class="cyc-val" id="cyc-transmision">—</span>
       </div>
     </div>
-
+ 
     <!-- Min required box -->
     <div class="min-req-box">
       <div class="min-req-title">⚡ Forward-Looking · Minimum Required for Remaining Days</div>
@@ -370,7 +372,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         </div>
       </div>
     </div>
-
+ 
     <!-- Daily bar chart -->
     <div class="card c-amber">
       <div class="card-title">📊 Daily CUD+MOL Balance vs Required Level</div>
@@ -386,12 +388,12 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
       </div>
     </div>
   </div>
-
+ 
   <!-- 02: History table + excess/deficit chart -->
   <div class="sub-section">
     <div class="sub-label">02 &nbsp;—&nbsp; Compliance History</div>
     <div class="two-col">
-
+ 
       <!-- History table -->
       <div class="card c-lp">
         <div class="card-title">📋 All Periods · Summary</div>
@@ -412,7 +414,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         </table>
         </div>
       </div>
-
+ 
       <!-- Excess/deficit chart (absolute) -->
       <div class="panel">
         <div class="panel-head">
@@ -428,9 +430,9 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         </div>
         <div class="cwrap" style="height:300px"><canvas id="c-exc"></canvas></div>
       </div>
-
+ 
     </div>
-
+ 
     <!-- Relative excess/deficit chart (%) — full width -->
     <div class="panel" style="margin-top:14px">
       <div class="panel-head">
@@ -447,9 +449,9 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
       </div>
       <div class="cwrap" style="height:300px"><canvas id="c-pct"></canvas></div>
     </div>
-
+ 
   </div>
-
+ 
   <!-- 04: Full historical daily chart -->
   <div class="sub-section">
     <div class="sub-label">03 &nbsp;—&nbsp; Historical Daily Balance vs Required</div>
@@ -468,54 +470,70 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
       <div class="cwrap" style="height:280px"><canvas id="c-daily"></canvas></div>
     </div>
   </div>
-
+ 
   </div><!-- /dashboard -->
 </main>
-
+ 
 <footer>Nubank · Colombia Treasury ALM · Encaje — Banco de la República · v_portfolio_completo</footer>
-
+ 
 <script>
 // ╔══════════════════════════════════════════════════════════════════════════╗
 // ║  Paste your Apps Script deployment URL here                             ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5izc_EfJ0bBHeq1qnxejantKRf9Btw9FjBbpzevRaRLpy9km-K5RBdFd7bwiRYUkbSQ/exec';
-
+ 
 let DATA = null;  // populated after fetch
-
+ 
 async function loadData(forceRefresh = false) {
   showLoading(true);
   try {
-    const suffix = forceRefresh ? '&nocache=' + Date.now() : '';
-    const res    = await fetch(APPS_SCRIPT_URL + '?dataset=encaje' + suffix);
-    const json   = await res.json();
-    if (json.status !== 'ok') throw new Error(json.message);
-
+    // 55s timeout — Databricks cold start can take ~40s
+    const suffix     = forceRefresh ? '&nocache=' + Date.now() : '';
+    const controller = new AbortController();
+    const timer      = setTimeout(() => controller.abort(), 55000);
+ 
+    let res;
+    try {
+      res = await fetch(APPS_SCRIPT_URL + '?dataset=encaje' + suffix, { signal: controller.signal });
+    } catch(fetchErr) {
+      if (fetchErr.name === 'AbortError') throw new Error('Request timed out after 55s — Databricks warehouse may be cold. Click Refresh to try again.');
+      throw new Error('Network error: ' + fetchErr.message + '\n\nIf opening locally, upload to GitHub Pages first.');
+    } finally {
+      clearTimeout(timer);
+    }
+ 
+    const text = await res.text();
+    let json;
+    try { json = JSON.parse(text); }
+    catch(e) { throw new Error('Apps Script returned non-JSON:\n' + text.slice(0, 300)); }
+ 
+    if (json.status !== 'ok') throw new Error(json.message || JSON.stringify(json));
+ 
     DATA = json;
-
-    // Update cache badge
+ 
     const badge = document.getElementById('cache-badge');
     if (badge) {
-      badge.textContent  = json.cached ? '◌ cached' : '⬤ live';
-      badge.className    = 'badge-static ' + (json.cached ? '' : 'badge-live');
+      badge.textContent   = json.cached ? '◌ cached' : '⬤ live';
+      badge.className     = 'badge-static ' + (json.cached ? 'badge-cached' : 'badge-live');
       badge.style.display = '';
     }
-
+ 
     showLoading(false);
     bootPage();
-
+ 
   } catch (err) {
     showLoading(false);
     showError(err.message);
   }
 }
-
+ 
 function showLoading(on) {
   const el = document.getElementById('loading-state');
   if (el) el.style.display = on ? 'flex' : 'none';
   const dash = document.getElementById('dashboard');
-  if (dash) dash.style.display = on ? 'none' : '';
+  if (dash) dash.style.display = on ? 'none' : 'block';
 }
-
+ 
 function showError(msg) {
   const el = document.getElementById('error-state');
   if (el) {
@@ -524,19 +542,19 @@ function showError(msg) {
     if (detail) detail.textContent = msg;
   }
 }
-
+ 
 // TODAY is dynamic — use getToday() // last date with data
 const RANGES = [{label:'ALL',days:null},{label:'1Y',days:365},{label:'6M',days:180},{label:'3M',days:90}];
-
+ 
 let activePeriodIdx = DATA.periods.length - 1;
 let activeRngExc = 'ALL', activeRngPct = 'ALL', activeRngDaily = '1Y';
 let cExc = null, cPct = null, cDaily = null;
-
+ 
 const $ = id => document.getElementById(id);
-
+ 
 function fmtMM(v){ return (v/1e9).toFixed(1)+' MM'; }
 function fmtMMno(v){ return (v/1e9).toFixed(1); }
-
+ 
 function daysUntil(dateStr){
   const d = new Date(dateStr); const t = new Date(getToday());
   return Math.round((d - t) / 86400000);
@@ -549,7 +567,7 @@ function totalWindowDays(p){
   const s = new Date(p.disp_start); const e = new Date(p.disp_end);
   return Math.round((e - s) / 86400000) + 1;
 }
-
+ 
 // ── Current period (always show the latest) ───────────────────────────────────
 function renderPeriodPanel(p){
   const req = p.required, avg = p.avg_cb, exc = p.excess;
@@ -558,10 +576,10 @@ function renderPeriodPanel(p){
   const totalDays = totalWindowDays(p);
   const remaining = Math.max(0, totalDays - days);
   const isOngoing = days < totalDays;
-
+ 
   const statusCls = ok ? 'ok' : isOngoing ? 'ongoing' : 'warn';
   const statusTxt = ok ? '✓ COMPLIANT' : isOngoing ? '⏳ PERIOD IN PROGRESS' : '✗ REGULATORY BREACH';
-
+ 
   $('status-banner').className = 'status-banner ' + statusCls;
   $('s-dot').className         = 's-dot ' + statusCls;
   $('s-title').className       = 's-title ' + statusCls;
@@ -569,7 +587,7 @@ function renderPeriodPanel(p){
   $('s-sub').textContent       = `Compliance window: ${p.disp_start} → ${p.disp_end} · ${days} of ${totalDays} days recorded`;
   $('s-cov-val').className     = 's-cov-val ' + statusCls;
   $('s-cov-val').textContent   = (avg/req*100).toFixed(1) + '%';
-
+ 
   // KPIs
   $('kpi-req').textContent = fmtMM(req);
   $('kpi-avg').textContent = fmtMM(avg);
@@ -579,7 +597,7 @@ function renderPeriodPanel(p){
   $('kpi-exc-sub').textContent = `${exc>=0?'+':''}${(exc/req*100).toFixed(1)}% of required`;
   $('kpi-days').textContent = remaining;
   $('kpi-days-sub').textContent = remaining===0 ? 'Period complete' : `of ${totalDays} total`;
-
+ 
   // Progress bar
   const maxBar = Math.max(avg, req);
   const fillPct = Math.min(100, avg/maxBar*100);
@@ -589,14 +607,14 @@ function renderPeriodPanel(p){
   fillEl.className     = 'prog-fill ' + statusCls;
   $('prog-req-marker').style.left = reqPct + '%';
   $('prog-pct-lbl').textContent   = fmtMM(avg) + ' of ' + fmtMM(req) + ' required';
-
+ 
   // Cycle bar
   $('cyc-req-window').textContent  = `${p.req_start} → ${p.req_end}`;
   $('cyc-disp-window').textContent = `${p.disp_start} → ${p.disp_end}`;
   $('cyc-elapsed').textContent     = `${days} day${days!==1?'s':''}`;
   $('cyc-remaining').textContent   = `${remaining} day${remaining!==1?'s':''}`;
   $('cyc-transmision').textContent = p.transmision || '—';
-
+ 
   // Forward-looking min daily needed
   const accSum    = Object.values(p.daily).reduce((s,v)=>s+v,0);
   const needed    = req * totalDays - accSum;
@@ -609,18 +627,18 @@ function renderPeriodPanel(p){
   minEl.className    = 'min-req-val ' + (alreadyOk ? 'safe' : minDaily > avg*1.5 ? 'tight' : '');
   $('fwd-already').textContent = alreadyOk ? '✓ Yes — even with 0 remaining' : '✗ Not yet';
   $('fwd-already').style.color = alreadyOk ? 'var(--green)' : 'var(--amber)';
-
+ 
   // Daily bars
   renderDailyBars(p, 'daily-bars', 'daily-labels');
   $('daily-sub').textContent = `${p.disp_start} → ${p.disp_end} · ${days} days recorded`;
 }
-
+ 
 function renderDailyBars(p, barsId, lblsId){
   const dayEntries = Object.entries(p.daily).sort((a,b)=>a[0].localeCompare(b[0]));
   const req = p.required;
   const maxVal = Math.max(...dayEntries.map(d=>d[1]), req);
   const reqH = Math.round((req/maxVal)*66);
-
+ 
   let bHTML='', lHTML='';
   dayEntries.forEach(([d,val])=>{
     const h   = Math.max(3, Math.round((val/maxVal)*66));
@@ -633,26 +651,26 @@ function renderDailyBars(p, barsId, lblsId){
   $(barsId).innerHTML = bHTML;
   $(lblsId).innerHTML = lHTML;
 }
-
+ 
 // ── Period navigator ──────────────────────────────────────────────────────────
 function setActivePeriod(idx){
   activePeriodIdx = Math.max(0, Math.min(DATA.periods.length-1, idx));
   const p = DATA.periods[activePeriodIdx];
-
+ 
   // Sync dropdown
   $('period-select').value = activePeriodIdx;
-
+ 
   // Nav buttons
   $('btn-prev').disabled   = activePeriodIdx === 0;
   $('btn-next').disabled   = activePeriodIdx === DATA.periods.length-1;
   $('btn-latest').disabled = activePeriodIdx === DATA.periods.length-1;
-
+ 
   // Highlight active row in table
   document.querySelectorAll('.hist-table tbody tr').forEach((tr,i)=>{
     const mirrorIdx = DATA.periods.length - 1 - i;
     tr.classList.toggle('active-row', mirrorIdx === activePeriodIdx);
   });
-
+ 
   // Update the full period analysis panel
   renderPeriodPanel(p);
   updateSelectorBadge(p);
@@ -660,7 +678,7 @@ function setActivePeriod(idx){
 $('btn-prev').onclick   = () => setActivePeriod(activePeriodIdx - 1);
 $('btn-next').onclick   = () => setActivePeriod(activePeriodIdx + 1);
 $('btn-latest').onclick = () => setActivePeriod(DATA.periods.length - 1);
-
+ 
 // ── History table ─────────────────────────────────────────────────────────────
 function renderHistTable(){
   let rows='';
@@ -687,7 +705,7 @@ function renderHistTable(){
   });
   $('hist-body').innerHTML = rows;
 }
-
+ 
 // ── Charts ────────────────────────────────────────────────────────────────────
 function slicePeriods(label){
   const days = RANGES.find(r=>r.label===label)?.days;
@@ -703,7 +721,7 @@ function sliceSeries(label){
   const co = cutoff.toISOString().slice(0,10);
   return DATA.daily_series.filter(d=>d.date >= co);
 }
-
+ 
 function renderExcChart(){
   const ps = slicePeriods(activeRngExc).filter(p=>Object.keys(p.daily).length>0);
   if(cExc) cExc.destroy();
@@ -753,8 +771,8 @@ function renderExcChart(){
     }
   });
 }
-
-
+ 
+ 
 function renderPctChart(){
   const ps = slicePeriods(activeRngPct).filter(p=>Object.keys(p.daily).length>0);
   if(cPct) cPct.destroy();
@@ -818,7 +836,7 @@ function renderPctChart(){
     }
   });
 }
-
+ 
 function renderDailyChart(){
   const series = sliceSeries(activeRngDaily);
   if(cDaily) cDaily.destroy();
@@ -856,7 +874,7 @@ function renderDailyChart(){
     }
   });
 }
-
+ 
 // ── Range pills ───────────────────────────────────────────────────────────────
 function buildRangePills(){
   function make(containerId, active, setter){
@@ -876,7 +894,7 @@ function buildRangePills(){
   make('range-pct',   activeRngPct,   v=>{ activeRngPct=v;   renderPctChart(); });
   make('range-daily', activeRngDaily, v=>{ activeRngDaily=v;  renderDailyChart(); });
 }
-
+ 
 // ── Selector ──────────────────────────────────────────────────────────────────
 function buildSelector(){
   const sel = $('period-select');
@@ -894,7 +912,7 @@ function buildSelector(){
   });
   sel.addEventListener('change', () => setActivePeriod(parseInt(sel.value)));
 }
-
+ 
 function updateSelectorBadge(p){
   const n = Object.keys(p.daily).length;
   const totalDays = totalWindowDays(p);
@@ -908,11 +926,11 @@ function updateSelectorBadge(p){
     badge.textContent='✗ Breach'; badge.className='sel-badge warn';
   }
 }
-
+ 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 Chart.defaults.color='#7a4ccc';
 Chart.defaults.borderColor='rgba(90,44,160,.4)';
-
+ 
 function bootPage(){
   buildSelector();
   renderHistTable();
@@ -922,13 +940,13 @@ function bootPage(){
   renderPctChart();
   renderDailyChart();
 }
-
+ 
 // Update TODAY dynamically from data
 function getToday(){
   if(!DATA || !DATA.daily_series || !DATA.daily_series.length) return '2026-05-04';
   return DATA.daily_series[DATA.daily_series.length-1].date;
 }
-
+ 
 // Replace static TODAY references in functions that use it
 loadData();
 </script>
