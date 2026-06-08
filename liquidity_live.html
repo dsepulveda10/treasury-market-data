@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquidity Management · Section 05</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --uv:        #2a1051;
+  --uv-card:   #3d1878;
+  --uv-border: #5a2ca0;
+  --purple:    #820AD1;
+  --lp:        #AA68FF;
+  --lp-dim:    #7a4ccc;
+  --off-white: #F4F4F4;
+  --muted:     #9f7fcc;
+  --dim:       #6a3fa0;
+  --green:     #27c97a;
+  --red:       #f05050;
+  --amber:     #f0a050;
+  --cyan:      #38bdf8;
+  --teal:      #2dd4bf;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--uv);color:var(--off-white);font-family:'Outfit',sans-serif;font-size:14px;min-height:100vh}
+
+/* ── Header ── */
+header{display:flex;align-items:center;gap:13px;padding:13px 26px;
+  background:rgba(42,16,81,.88);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--uv-border);position:sticky;top:0;z-index:100}
+.nu{font-weight:800;font-size:14px;color:var(--off-white);background:var(--purple);
+    padding:4px 10px;border-radius:6px;text-transform:lowercase;letter-spacing:-.5px}
+header h1{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.hline{width:1px;height:18px;background:var(--uv-border)}
+.dept{font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.3px}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:14px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+#ts{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.cache-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.badge-live{color:var(--green);background:rgba(39,201,122,.08);border:1px solid rgba(39,201,122,.2)}
+.badge-cached{color:var(--muted);background:rgba(90,44,160,.2);border:1px solid var(--uv-border)}
+.refresh-btn{background:transparent;border:1px solid var(--uv-border);color:var(--muted);
+  padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'Outfit',sans-serif;transition:all .2s}
+.refresh-btn:hover{border-color:var(--lp);color:var(--lp)}
+
+/* ── Layout ── */
+main{padding:22px 26px 40px;max-width:1440px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:6px}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.2px;color:var(--lp);
+  background:rgba(170,104,255,.1);border:1px solid rgba(170,104,255,.25);padding:2px 9px;border-radius:4px;text-transform:uppercase}
+.sec-head h2{font-size:15px;font-weight:700;letter-spacing:-.2px}
+.divider{height:1px;background:var(--uv-border);margin-bottom:20px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.sub-section{margin-bottom:28px}
+.sub-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
+  letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;padding-left:2px}
+
+/* ── Loading / error states ── */
+.state-box{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;padding:56px 40px;border:1px solid var(--uv-border);border-radius:12px;
+  background:rgba(61,24,120,.3);text-align:center}
+.spinner{width:34px;height:34px;border:3px solid var(--uv-border);
+  border-top-color:var(--lp);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.state-title{font-size:15px;font-weight:600}
+.state-sub{font-size:11px;color:var(--muted)}
+.error-box{border-color:rgba(240,80,80,.25)}
+.error-detail{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);
+  background:rgba(240,80,80,.07);padding:8px 12px;border-radius:6px;
+  max-width:500px;word-break:break-all;white-space:pre-wrap;text-align:left}
+.retry-btn{background:rgba(170,104,255,.1);border:1px solid var(--lp-dim);color:var(--lp);
+  padding:7px 20px;border-radius:8px;cursor:pointer;font-size:13px;
+  font-family:'Outfit',sans-serif;font-weight:600;transition:all .2s}
+.retry-btn:hover{background:rgba(170,104,255,.2)}
+
+/* ── Date bar ── */
+.date-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--uv-card);border:1px solid var(--uv-border);
+  border-radius:10px;padding:10px 16px;margin-bottom:14px}
+.date-bar label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap}
+.diwrap{position:relative;display:flex;align-items:center}
+.diwrap svg{position:absolute;left:10px;pointer-events:none;color:var(--lp);width:14px;height:14px}
+#date-picker{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+  background:rgba(170,104,255,.08);border:1px solid var(--uv-border);color:var(--off-white);
+  padding:6px 10px 6px 32px;border-radius:8px;cursor:pointer;outline:none;
+  transition:border-color .2s;-webkit-appearance:none;appearance:none}
+#date-picker::-webkit-calendar-picker-indicator{filter:invert(70%) sepia(40%) saturate(500%) hue-rotate(230deg);cursor:pointer;opacity:.7}
+#date-picker:focus,#date-picker:hover{border-color:var(--lp)}
+.date-nav{display:flex;gap:4px}
+.dnav{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  background:transparent;border:1px solid var(--uv-border);color:var(--muted);
+  padding:5px 10px;border-radius:7px;cursor:pointer;transition:all .15s;line-height:1}
+.dnav:hover{border-color:var(--lp);color:var(--lp)}
+.dnav:disabled{opacity:.3;cursor:default}
+.date-badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-left:auto}
+.date-badge span{color:var(--lp);font-weight:600}
+.date-warn{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--red);
+  background:rgba(240,80,80,.08);border:1px solid rgba(240,80,80,.2);padding:2px 8px;border-radius:4px}
+
+/* ── KPI strip ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:12px;
+  padding:14px 16px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.k-cb::before{background:linear-gradient(90deg,var(--lp) 0%,transparent 65%)}
+.kpi.k-inv::before{background:linear-gradient(90deg,var(--green) 0%,transparent 65%)}
+.kpi.k-bk::before{background:linear-gradient(90deg,var(--cyan) 0%,transparent 65%)}
+.kpi.k-tot::before{background:linear-gradient(90deg,var(--amber) 0%,transparent 65%)}
+.kpi-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px}
+.kpi-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-val.k-cb{color:var(--lp)}
+.kpi-val.k-inv{color:var(--green)}
+.kpi-val.k-bk{color:var(--cyan)}
+.kpi-val.k-tot{color:var(--amber)}
+.kpi-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim)}
+.kpi-delta{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  padding:1px 6px;border-radius:4px;display:inline-block;margin-top:4px}
+
+/* ── Cards ── */
+.card{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;
+  padding:18px 18px 14px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.card::after{content:'';position:absolute;top:-40px;left:-40px;width:160px;height:160px;border-radius:50%;pointer-events:none}
+.card.c-cb::before{background:linear-gradient(90deg,var(--lp) 0%,transparent 65%)}
+.card.c-cb::after{background:radial-gradient(circle,rgba(170,104,255,.15) 0%,transparent 70%)}
+.card.c-inv::before{background:linear-gradient(90deg,var(--green) 0%,transparent 65%)}
+.card.c-inv::after{background:radial-gradient(circle,rgba(39,201,122,.12) 0%,transparent 70%)}
+.card.c-bk::before{background:linear-gradient(90deg,var(--cyan) 0%,transparent 65%)}
+.card.c-bk::after{background:radial-gradient(circle,rgba(56,189,248,.12) 0%,transparent 70%)}
+.card.c-mat::before{background:linear-gradient(90deg,var(--amber) 0%,transparent 65%)}
+.card.c-mat::after{background:radial-gradient(circle,rgba(240,160,80,.12) 0%,transparent 70%)}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);margin-bottom:2px}
+.card-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);margin-bottom:12px;line-height:1.5}
+
+/* ── Rate rows ── */
+.rrow{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:9px 0;border-bottom:1px solid rgba(90,44,160,.35)}
+.rrow:last-child{border-bottom:none}
+.rrow-left{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.ttag{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+  color:var(--lp);background:rgba(170,104,255,.1);padding:2px 7px;border-radius:4px;
+  white-space:nowrap;display:inline-block;margin-bottom:2px}
+.ttag.tg-green{color:var(--green);background:rgba(39,201,122,.1)}
+.ttag.tg-cyan{color:var(--cyan);background:rgba(56,189,248,.1)}
+.ttag.tg-amber{color:var(--amber);background:rgba(240,160,80,.1)}
+.rmid{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;line-height:1.2}
+.rspread{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+.rdelta{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  padding:2px 6px;border-radius:4px;white-space:nowrap;text-align:right}
+.dpos{color:var(--green);background:rgba(39,201,122,.1)}
+.dneg{color:var(--red);background:rgba(240,80,80,.1)}
+.dzero{color:var(--muted)}
+
+/* ── Maturity ladder table ── */
+.mat-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:10px}
+.mat-table th{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--dim);padding:6px 8px;text-align:left;border-bottom:1px solid var(--uv-border)}
+.mat-table th:last-child,.mat-table td:last-child{text-align:right}
+.mat-table th:nth-child(3),.mat-table td:nth-child(3){text-align:right}
+.mat-table td{padding:6px 8px;border-bottom:1px solid rgba(90,44,160,.25);color:var(--off-white);vertical-align:middle}
+.mat-table tbody tr:last-child td{border-bottom:none}
+.mat-table tbody tr:hover td{background:rgba(170,104,255,.05)}
+.mat-table tfoot td{color:var(--off-white);font-weight:700;font-size:10px}
+.bond-tag{display:inline-block;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;
+  background:rgba(170,104,255,.12);border:1px solid rgba(170,104,255,.25);color:var(--lp);letter-spacing:.3px}
+.days-tag{display:inline-block;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap}
+.days-today{background:rgba(240,80,80,.12);border:1px solid rgba(240,80,80,.25);color:var(--red)}
+.days-near{background:rgba(240,160,80,.1);border:1px solid rgba(240,160,80,.2);color:var(--amber)}
+.days-mid{background:rgba(39,201,122,.08);border:1px solid rgba(39,201,122,.2);color:var(--green)}
+.days-far{background:rgba(90,44,160,.2);border:1px solid var(--uv-border);color:var(--muted)}
+.mat-empty{color:var(--muted);font-size:11px;padding:16px 0;text-align:center}
+
+/* ── Bar mini-chart ── */
+.bar-wrap{display:flex;gap:3px;align-items:flex-end;height:40px;margin-top:8px}
+.bar-seg{flex:1;border-radius:3px 3px 0 0;min-height:3px;transition:opacity .2s}
+.bar-seg:hover{opacity:.75}
+
+/* ── Chart panels ── */
+.panel{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;
+  padding:18px 18px 14px;position:relative;overflow:hidden}
+.panel::after{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(130,10,209,.1) 0%,transparent 70%);pointer-events:none}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:8px;flex-wrap:wrap}
+.ptitle{font-size:13px;font-weight:700;letter-spacing:-.15px}
+.psub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px}
+.controls{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.range-pills{display:flex;gap:4px}
+.rpill{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:2px 7px;
+  border-radius:20px;cursor:pointer;border:1px solid var(--uv-border);background:transparent;
+  color:var(--dim);transition:all .15s}
+.rpill:hover{border-color:var(--lp-dim);color:var(--muted)}
+.rpill.on{border-color:rgba(170,104,255,.5);background:rgba(170,104,255,.07);color:var(--muted)}
+.cwrap{position:relative;height:240px}
+.coverlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(42,16,81,.85);border-radius:8px;z-index:10}
+.mspin{width:20px;height:20px;border:2px solid var(--uv-border);border-top-color:var(--lp);
+  border-radius:50%;animation:spin .7s linear infinite}
+
+/* ── Legend ── */
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.leg-item{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── WA rate badge ── */
+.wa-badge{display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:rgba(39,201,122,.06);border:1px solid rgba(39,201,122,.2);border-radius:8px;margin-bottom:10px}
+.wa-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.wa-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--green);margin-left:auto}
+
+
+/* ── Encaje ── */
+.enc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.enc-status{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;margin-bottom:12px}
+.enc-status.ok{background:rgba(39,201,122,.08);border:1px solid rgba(39,201,122,.25)}
+.enc-status.warn{background:rgba(240,80,80,.08);border:1px solid rgba(240,80,80,.25)}
+.enc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.enc-dot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
+.enc-dot.warn{background:var(--red);box-shadow:0 0 6px var(--red)}
+.enc-status-text{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700}
+.enc-status-text.ok{color:var(--green)}
+.enc-status-text.warn{color:var(--red)}
+.enc-status-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-left:auto}
+.enc-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.enc-m{background:rgba(42,16,81,.5);border:1px solid var(--uv-border);border-radius:8px;padding:10px 12px}
+.enc-m-label{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);margin-bottom:4px}
+.enc-m-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700}
+.enc-m-val.v-req{color:var(--amber)}
+.enc-m-val.v-avg{color:var(--lp)}
+.enc-m-val.v-exc.pos{color:var(--green)}
+.enc-m-val.v-exc.neg{color:var(--red)}
+.enc-progress{margin-bottom:14px}
+.enc-prog-label{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:5px}
+.enc-prog-track{height:8px;background:rgba(90,44,160,.3);border-radius:4px;overflow:hidden;position:relative}
+.enc-prog-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.enc-prog-fill.ok{background:linear-gradient(90deg,var(--green),#1fa866)}
+.enc-prog-fill.warn{background:linear-gradient(90deg,var(--red),#c03030)}
+.enc-prog-req-wrap{position:relative;margin-top:4px}
+.enc-req-marker{position:absolute;top:-12px;width:2px;background:var(--amber);height:20px;border-radius:1px}
+.enc-req-marker-lbl{position:absolute;top:-22px;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--amber);transform:translateX(-50%)}
+.enc-daily-wrap{overflow-x:auto}
+.enc-daily{display:flex;gap:2px;align-items:flex-end;height:56px;position:relative}
+.enc-bar{flex:1;min-width:8px;border-radius:2px 2px 0 0;cursor:default;position:relative;transition:opacity .15s}
+.enc-bar:hover{opacity:.75}
+.enc-bar.ok{background:rgba(170,104,255,.6)}
+.enc-bar.low{background:rgba(240,80,80,.7)}
+.enc-req-line{position:absolute;left:0;right:0;height:2px;background:rgba(240,160,80,.8);pointer-events:none}
+.enc-daily-labels{display:flex;gap:2px;margin-top:3px}
+.enc-day-lbl{flex:1;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--dim);text-align:center}
+.enc-hist-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:10px}
+.enc-hist-table th{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);padding:5px 8px;text-align:left;border-bottom:1px solid var(--uv-border)}
+.enc-hist-table th:not(:first-child){text-align:right}
+.enc-hist-table td{padding:5px 8px;border-bottom:1px solid rgba(90,44,160,.2);vertical-align:middle}
+.enc-hist-table td:not(:first-child){text-align:right}
+.enc-hist-table tbody tr:last-child td{border-bottom:none}
+.enc-hist-table tbody tr:hover td{background:rgba(170,104,255,.04)}
+.enc-badge{display:inline-flex;align-items:center;gap:3px;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap}
+.enc-badge.ok{color:var(--green);background:rgba(39,201,122,.1);border:1px solid rgba(39,201,122,.2)}
+.enc-badge.warn{color:var(--red);background:rgba(240,80,80,.1);border:1px solid rgba(240,80,80,.2)}
+.enc-badge.partial{color:var(--amber);background:rgba(240,160,80,.1);border:1px solid rgba(240,160,80,.2)}
+
+footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
+  text-align:center;padding:20px 26px 14px;border-top:1px solid var(--uv-border);margin-top:8px}
+.hidden{display:none!important}
+@media(max-width:900px){main{padding:12px}.kpi-strip,.two-col,.three-col,.four-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nu">nu</div>
+  <h1>Treasury's Market Data</h1>
+  <div class="hline"></div>
+  <span class="dept">Treasury · Colombia</span>
+  <div class="hmeta">
+    <div class="live-dot"></div>
+    <span id="ts">—</span>
+    <span id="cache-badge" class="cache-badge hidden"></span>
+    <button class="refresh-btn" onclick="loadData(true)">↻ Refresh</button>
+  </div>
+</header>
+
+<main>
+  <div class="sec-head">
+    <span class="sec-num">SECTION 05</span>
+    <h2>Liquidity Management</h2>
+  </div>
+  <div class="divider"></div>
+
+  <!-- Loading -->
+  <div id="state-loading" class="state-box">
+    <div class="spinner"></div>
+    <span class="state-title">Loading Liquidity Data</span>
+    <p class="state-sub" id="loading-msg">Connecting to Databricks…</p>
+  </div>
+
+  <!-- Error -->
+  <div id="state-error" class="state-box error-box hidden">
+    <span style="font-size:26px">⚠️</span>
+    <span class="state-title">Could not load data</span>
+    <pre id="error-detail" class="error-detail"></pre>
+    <button class="retry-btn" onclick="loadData(true)">↻ Retry</button>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden">
+
+    <!-- 01: Date selector -->
+    <div class="sub-section">
+      <div class="sub-label">01 &nbsp;—&nbsp; Date</div>
+      <div class="date-bar">
+        <label>Report Date</label>
+        <div class="diwrap">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="1" y="2.5" width="14" height="12" rx="2"/>
+            <path d="M1 6.5h14M5 1v3M11 1v3"/>
+          </svg>
+          <input type="date" id="date-picker">
+        </div>
+        <div class="date-nav">
+          <button class="dnav" id="btn-prev">◀</button>
+          <button class="dnav" id="btn-next">▶</button>
+          <button class="dnav" id="btn-latest">Latest</button>
+        </div>
+        <div id="date-warn" class="date-warn hidden">No data for this date</div>
+        <div class="date-badge">Showing: <span id="showing-date">—</span></div>
+      </div>
+    </div>
+
+    <!-- 02: KPI strip -->
+    <div class="sub-section">
+      <div class="sub-label">02 &nbsp;—&nbsp; Snapshot</div>
+      <div class="kpi-strip">
+        <div class="kpi k-cb">
+          <div class="kpi-label">Central Bank Accounts</div>
+          <div class="kpi-val k-cb" id="kpi-cb">—</div>
+          <div class="kpi-sub">CUD + MOL · MM COP</div>
+          <div class="kpi-delta dzero" id="kpi-cb-d">—</div>
+        </div>
+        <div class="kpi k-inv">
+          <div class="kpi-label">Invested Liquidity</div>
+          <div class="kpi-val k-inv" id="kpi-inv">—</div>
+          <div class="kpi-sub">Simultaneas + Dep. Remunerado · MM COP</div>
+          <div class="kpi-delta dzero" id="kpi-inv-d">—</div>
+        </div>
+        <div class="kpi k-bk">
+          <div class="kpi-label">Correspondent Banks</div>
+          <div class="kpi-val k-bk" id="kpi-bk">—</div>
+          <div class="kpi-sub">Citi + JPM + Santander · MM COP</div>
+          <div class="kpi-delta dzero" id="kpi-bk-d">—</div>
+        </div>
+        <div class="kpi k-tot">
+          <div class="kpi-label">Total Liquidity</div>
+          <div class="kpi-val k-tot" id="kpi-tot">—</div>
+          <div class="kpi-sub">All groups combined · MM COP</div>
+          <div class="kpi-delta dzero" id="kpi-tot-d">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03: Rate-run cards -->
+    <div class="sub-section">
+      <div class="sub-label">03 &nbsp;—&nbsp; Position Detail</div>
+      <div class="three-col">
+
+        <!-- Central Bank -->
+        <div class="card c-cb">
+          <div class="card-title">🏦 Central Bank Accounts</div>
+          <div class="card-sub" id="cb-sub">CUD · MOL</div>
+          <div id="list-cb"></div>
+        </div>
+
+        <!-- Invested liquidity -->
+        <div class="card c-inv">
+          <div class="card-title">💰 Invested Liquidity</div>
+          <div class="card-sub" id="inv-sub">Simultaneas · Depósito Remunerado</div>
+          <div id="wa-inv" class="wa-badge hidden">
+            <span class="wa-label">Wtd. Avg. Rate</span>
+            <span class="wa-val" id="wa-inv-val">—</span>
+          </div>
+          <div id="list-inv"></div>
+        </div>
+
+        <!-- Correspondent banks -->
+        <div class="card c-bk">
+          <div class="card-title">🌐 Correspondent Banks</div>
+          <div class="card-sub" id="bk-sub">Citibank · JPMorgan · Santander</div>
+          <div id="list-bk"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 04: Maturity ladder -->
+    <div class="sub-section">
+      <div class="sub-label">04 &nbsp;—&nbsp; Simultaneas Maturity Ladder</div>
+      <div class="two-col">
+
+        <!-- Table 1: Maturity buckets -->
+        <div class="card c-mat">
+          <div class="card-title">📅 Maturity Buckets</div>
+          <div class="card-sub" id="mat-sub">—</div>
+          <table class="mat-table">
+            <thead>
+              <tr>
+                <th>Bucket</th>
+                <th style="text-align:right">Positions</th>
+                <th style="text-align:right">Nominal (MM COP)</th>
+                <th style="text-align:right">% of Total</th>
+              </tr>
+            </thead>
+            <tbody id="mat-buckets"></tbody>
+            <tfoot id="mat-buckets-foot"></tfoot>
+          </table>
+        </div>
+
+        <!-- Table 2: Collateral by bond reference -->
+        <div class="card c-mat">
+          <div class="card-title">🏛️ Collateral by Bond Reference</div>
+          <div class="card-sub" id="col-sub">Sovereign bonds received as collateral</div>
+          <table class="mat-table">
+            <thead>
+              <tr>
+                <th>Bond</th>
+                <th style="text-align:right">Positions</th>
+                <th style="text-align:right">Nominal (MM COP)</th>
+                <th style="text-align:right">% of Total</th>
+              </tr>
+            </thead>
+            <tbody id="mat-collateral"></tbody>
+            <tfoot id="mat-collateral-foot"></tfoot>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- 05: Encaje (Legal Reserve) -->
+    <div class="sub-section">
+      <div class="sub-label">05 &nbsp;—&nbsp; Encaje · Legal Reserve</div>
+      <div class="enc-grid">
+
+        <div class="card c-cb">
+          <div class="card-title">🏛️ Current Period · Compliance</div>
+          <div class="card-sub" id="enc-period-label">—</div>
+          <div id="enc-status" class="enc-status ok" style="margin-top:10px">
+            <div id="enc-dot" class="enc-dot ok"></div>
+            <span id="enc-status-text" class="enc-status-text ok">—</span>
+            <span id="enc-status-sub" class="enc-status-sub">—</span>
+          </div>
+          <div class="enc-metrics">
+            <div class="enc-m">
+              <div class="enc-m-label">Required</div>
+              <div class="enc-m-val v-req" id="enc-req">—</div>
+            </div>
+            <div class="enc-m">
+              <div class="enc-m-label">Avg Balance</div>
+              <div class="enc-m-val v-avg" id="enc-avg">—</div>
+            </div>
+            <div class="enc-m">
+              <div class="enc-m-label">Excess / Deficit</div>
+              <div class="enc-m-val v-exc pos" id="enc-exc">—</div>
+            </div>
+          </div>
+          <div class="enc-progress">
+            <div class="enc-prog-label">
+              <span style="color:var(--dim)">0</span>
+              <span id="enc-prog-pct">—</span>
+            </div>
+            <div class="enc-prog-track">
+              <div class="enc-prog-fill ok" id="enc-prog-fill" style="width:0%"></div>
+            </div>
+            <div class="enc-prog-req-wrap" id="enc-req-wrap">
+              <div class="enc-req-marker" id="enc-req-marker" style="left:100%">
+                <div class="enc-req-marker-lbl">req</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);margin-bottom:5px">
+            Daily CUD+MOL — <span style="color:var(--lp)">■</span> above req &nbsp;<span style="color:var(--red)">■</span> below req &nbsp;<span style="color:var(--amber)">━</span> required level
+          </div>
+          <div class="enc-daily-wrap">
+            <div class="enc-daily" id="enc-daily-bars"></div>
+            <div class="enc-daily-labels" id="enc-daily-labels"></div>
+          </div>
+        </div>
+
+        <div class="card c-cb">
+          <div class="card-title">📋 Compliance History · All Periods</div>
+          <div class="card-sub">Disponible window · Average CUD+MOL vs Required</div>
+          <div style="overflow-x:auto;max-height:380px;overflow-y:auto">
+            <table class="enc-hist-table">
+              <thead>
+                <tr>
+                  <th>Period (disponible)</th>
+                  <th>Required</th>
+                  <th>Avg CB</th>
+                  <th>Excess</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="enc-hist-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 06 + 07: Historical charts -->
+    <div class="sub-section">
+      <div class="sub-label">06 · 07 &nbsp;—&nbsp; Historical Charts</div>
+      <div class="two-col">
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="ptitle">Total Liquidity · Historical</div>
+              <div class="psub">MM COP (billions) · stacked by group</div>
+            </div>
+            <div class="controls">
+              <div class="range-pills" id="range-liq"></div>
+            </div>
+          </div>
+          <div class="legend" id="leg-liq">
+            <div class="leg-item"><div class="leg-dot" style="background:var(--lp)"></div>Central Bank</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Invested</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div>Corresp. Banks</div>
+          </div>
+          <div class="cwrap">
+            <div class="coverlay hidden" id="spin-liq"><div class="mspin"></div></div>
+            <canvas id="c-liq"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="ptitle">Invested Liquidity · Rate Evolution</div>
+              <div class="psub">Wtd. avg. rate of Simultaneas + Dep. Remunerado</div>
+            </div>
+            <div class="controls">
+              <div class="range-pills" id="range-rate"></div>
+            </div>
+          </div>
+          <div class="cwrap">
+            <div class="coverlay hidden" id="spin-rate"><div class="mspin"></div></div>
+            <canvas id="c-rate"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /dashboard -->
+</main>
+
+<footer>Nubank · Colombia Treasury ALM · @col_treasury_alm · v_portfolio_completo</footer>
+
+<script>
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const RANGES = [{label:'1M',days:30},{label:'3M',days:90},{label:'6M',days:180},{label:'1Y',days:365},{label:'ALL',days:null}];
+
+const UII_CB  = ['CUD','MOL'];
+const UII_INV = ['SIMULTANEAS','DEPOSITO REMUNERADO'];
+const UII_BK  = ['CITIBANK','JPM','SANTANDER'];
+
+const UII_LABELS = {
+  'CUD':'CUD', 'MOL':'MOL',
+  'SIMULTANEAS':'Simultaneas', 'DEPOSITO REMUNERADO':'Dep. Remunerado',
+  'CITIBANK':'Citibank', 'JPM':'JPMorgan', 'SANTANDER':'Santander',
+};
+
+// ── App state ─────────────────────────────────────────────────────────────────
+let D            = null;
+let selectedDate = null;
+let activeRngLiq = '3M', activeRngRate = '3M';
+let cLiq = null, cRate = null;
+
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║  Paste your Apps Script deployment URL here                             ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyFhEh77bRMWpRCN7r5lWdlyYibYU6dqEKVTZL8j8gmjpk7WwxOarmSuX8glJANMfu0/exec';
+
+let D = null;
+
+async function loadData(forceRefresh = false) {
+  hide('state-error');
+  hide('dashboard');
+  show('state-loading');
+  $('loading-msg').textContent = 'Connecting to Databricks…';
+
+  try {
+    const suffix     = forceRefresh ? '&nocache=' + Date.now() : '';
+    const controller = new AbortController();
+    const timer      = setTimeout(() => controller.abort(), 55000);
+
+    let res;
+    try {
+      res = await fetch(APPS_SCRIPT_URL + '?dataset=liquidity' + suffix, { signal: controller.signal });
+    } catch(fetchErr) {
+      if (fetchErr.name === 'AbortError')
+        throw new Error('Request timed out after 55s — warehouse may be cold. Click Refresh to try again.');
+      throw new Error('Network error: ' + fetchErr.message);
+    } finally {
+      clearTimeout(timer);
+    }
+
+    $('loading-msg').textContent = 'Processing data…';
+    const text = await res.text();
+    let json;
+    try { json = JSON.parse(text); }
+    catch(e) { throw new Error('Apps Script returned non-JSON:\n' + text.slice(0, 300)); }
+
+    if (json.status !== 'ok') throw new Error(json.message || JSON.stringify(json));
+
+    // Build D from live response — same shape as static
+    D = {
+      availDates: json.dates,
+      availSet:   new Set(json.dates),
+      latestDate: json.dates[json.dates.length - 1],
+      byDate:     json.snapshots,
+      hist:       json.hist,
+    };
+
+    const badge = $('cache-badge');
+    badge.className = 'cache-badge ' + (json.cached ? 'badge-cached' : 'badge-live');
+    badge.textContent = json.cached ? '◌ cached' : '⬤ live';
+    show('cache-badge');
+
+    hide('state-loading');
+    show('dashboard');
+    buildRangePills();
+    setDate(D.latestDate);
+    renderCharts();
+
+  } catch(err) {
+    console.error(err);
+    hide('state-loading');
+    $('error-detail').textContent = err.message;
+    show('state-error');
+  }
+}
+
+// data shape: byDate[d][uii] = [{n,t,v,b,fc}]
+function sumNominal(dayObj, uiis){
+  return uiis.reduce((s,u)=>{
+    return s+(dayObj[u]||[]).reduce((a,r)=>a+(r.n||0),0);
+  },0);
+}
+function computeWA(dayObj, uiis){
+  let sw=0,sv=0;
+  uiis.forEach(u=>{
+    (dayObj[u]||[]).forEach(r=>{
+      if((r.n||0)>0&&(r.t||0)>0){sw+=r.n*r.t;sv+=r.n;}
+    });
+  });
+  return sv>0?sw/sv:null;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const $    = id => document.getElementById(id);
+const show = id => $(id).classList.remove('hidden');
+const hide = id => $(id).classList.add('hidden');
+
+function fmtTn(v){ return (v/1e9).toFixed(1)+' MM'; }
+function fmtBn(v){ return Math.round(v/1e9).toLocaleString('en-CO')+' MM'; }
+function fmtPct(v){ return v.toFixed(2)+'%'; }
+
+function dClass(d){ return d>500e6?'dpos':d<-500e6?'dneg':'dzero'; }
+function dStr(v){
+  if(Math.abs(v)<500e6) return '±0';
+  const sign=v>0?'+':'';
+  return sign+fmtBn(v)+' MM';
+}
+
+function prevD(d){ const i=D.availDates.indexOf(d); return i>0?D.availDates[i-1]:null; }
+function nextD(d){ const i=D.availDates.indexOf(d); return i<D.availDates.length-1?D.availDates[i+1]:null; }
+function nearestAvail(ds){
+  if(D.availSet.has(ds)) return ds;
+  const all=D.availDates; let lo=0,hi=all.length-1;
+  while(lo<=hi){const m=Math.floor((lo+hi)/2); all[m]<ds?lo=m+1:hi=m-1;}
+  return hi>=0?all[hi]:all[0];
+}
+function sliceBy(arr, rangeLbl){
+  const days=RANGES.find(r=>r.label===rangeLbl)?.days;
+  if(!days) return arr;
+  const cutoff=new Date(D.latestDate);
+  cutoff.setDate(cutoff.getDate()-days);
+  const co=cutoff.toISOString().slice(0,10);
+  return arr.filter(r=>r.date>=co);
+}
+function updateTs(){
+  const n=new Date();
+  $('ts').textContent=n.toLocaleDateString('en-CO',{timeZone:'America/Bogota'})+' · '+
+    n.toLocaleTimeString('en-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit'})+' COT';
+}
+function daysUntil(dateStr){
+  // dateStr may be DD/MM/YY or YYYY-MM-DD
+  let d;
+  if(/^\d{2}\/\d{2}\/\d{2}$/.test(dateStr)){
+    const [dd,mm,yy]=dateStr.split('/');
+    d=new Date(2000+parseInt(yy),parseInt(mm)-1,parseInt(dd));
+  } else {
+    d=new Date(dateStr);
+  }
+  const today=new Date(); today.setHours(0,0,0,0);
+  return Math.round((d-today)/(1000*60*60*24));
+}
+function daysClass(n){
+  if(n<=0) return 'days-today';
+  if(n<=7) return 'days-near';
+  if(n<=30) return 'days-mid';
+  return 'days-far';
+}
+function parseDate(raw){
+  // raw: "4/05/26" → "2026-05-04"
+  if(!raw) return null;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+  const parts=raw.split('/');
+  if(parts.length===3){
+    let [d,m,y]=parts;
+    if(y.length===2) y='20'+y;
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  return raw;
+}
+
+
+
+
+
+function sumNominal(dayObj, uiis){
+  return uiis.reduce((s,u)=>{
+    const rows=dayObj[u]||[];
+    return s+rows.reduce((a,r)=>a+(r.n||0),0);
+  },0);
+}
+
+function computeWA(dayObj, uiis){
+  let sumW=0, sumV=0;
+  uiis.forEach(u=>{
+    (dayObj[u]||[]).forEach(r=>{
+      const n=r.n||0;
+      const t=r.t||0;
+      if(n>0 && t>0){ sumW+=n*t; sumV+=n; }
+    });
+  });
+  return sumV>0?sumW/sumV:null;
+}
+
+// ── Date selector ─────────────────────────────────────────────────────────────
+function setDate(ds, skipPicker){
+  const resolved=nearestAvail(ds);
+  D.availSet.has(ds)?hide('date-warn'):show('date-warn');
+  selectedDate=resolved;
+  $('showing-date').textContent=resolved;
+  if(!skipPicker) $('date-picker').value=resolved;
+  $('btn-prev').disabled   = !prevD(resolved);
+  $('btn-next').disabled   = !nextD(resolved);
+  $('btn-latest').disabled = resolved===D.latestDate;
+  $('date-picker').min=D.availDates[0];
+  $('date-picker').max=D.latestDate;
+  renderSnapshot(resolved);
+  renderEncaje(resolved);
+}
+$('date-picker').addEventListener('change',e=>setDate(e.target.value,true));
+$('btn-prev').onclick   =()=>{const d=prevD(selectedDate);if(d)setDate(d);};
+$('btn-next').onclick   =()=>{const d=nextD(selectedDate);if(d)setDate(d);};
+$('btn-latest').onclick =()=>setDate(D.latestDate);
+
+// ── Render snapshot (KPIs + cards + maturity ladder) ─────────────────────────
+function renderSnapshot(date){
+  const pd = prevD(date);
+  const day = D.byDate[date]||{};
+  const dayP = pd?(D.byDate[pd]||{}):{};
+
+  const cb   = sumNominal(day,  UII_CB);
+  const inv  = sumNominal(day,  UII_INV);
+  const bk   = sumNominal(day,  UII_BK);
+  const tot  = cb+inv+bk;
+  const cbP  = sumNominal(dayP, UII_CB);
+  const invP = sumNominal(dayP, UII_INV);
+  const bkP  = sumNominal(dayP, UII_BK);
+  const totP = cbP+invP+bkP;
+
+  // KPIs
+  $('kpi-cb').textContent  = fmtTn(cb);
+  $('kpi-inv').textContent = fmtTn(inv);
+  $('kpi-bk').textContent  = fmtTn(bk);
+  $('kpi-tot').textContent = fmtTn(tot);
+
+  function setDelta(elId, curr, prev){
+    const el=$(elId); const d=curr-prev;
+    el.textContent = pd ? (dStr(d)+' vs prev') : '—';
+    el.className='kpi-delta '+dClass(d);
+  }
+  setDelta('kpi-cb-d',  cb,  cbP);
+  setDelta('kpi-inv-d', inv, invP);
+  setDelta('kpi-bk-d',  bk,  bkP);
+  setDelta('kpi-tot-d', tot, totP);
+
+  // Subtitle
+  $('cb-sub').textContent  = date+(pd?' · Δ vs '+pd:'');
+  $('inv-sub').textContent = date+(pd?' · Δ vs '+pd:'');
+  $('bk-sub').textContent  = date+(pd?' · Δ vs '+pd:'');
+
+  // Central bank card
+  let cbHTML='';
+  UII_CB.forEach(u=>{
+    const rows=day[u]||[];
+    const rowsP=dayP[u]||[];
+    const val=rows.reduce((a,r)=>a+(r.n||0),0);
+    const valP=rowsP.reduce((a,r)=>a+(r.n||0),0);
+    const d=val-valP;
+    cbHTML+=`<div class="rrow">
+      <div class="rrow-left"><span class="ttag">${u}</span>
+      <div class="rmid">${fmtTn(val)}</div>
+      <div class="rspread">${fmtBn(val)} MM COP</div></div>
+      <span class="rdelta ${dClass(d)}">${pd?dStr(d):'—'}</span>
+    </div>`;
+  });
+  $('list-cb').innerHTML=cbHTML||'<div class="mat-empty">No data</div>';
+
+  // Invested card
+  const waRate=computeWA(day,UII_INV);
+  if(waRate!=null){
+    $('wa-inv-val').textContent=fmtPct(waRate);
+    show('wa-inv');
+  } else { hide('wa-inv'); }
+
+  let invHTML='';
+  UII_INV.forEach(u=>{
+    const rows=day[u]||[];
+    const rowsP=dayP[u]||[];
+    if(!rows.length) return;
+    const val=rows.reduce((a,r)=>a+(r.n||0),0);
+    const valP=rowsP.reduce((a,r)=>a+(r.n||0),0);
+    // WAR for this UII
+    let sw=0,sv=0; rows.forEach(r=>{const n=r.n||0;const t=r.t||0;if(n>0&&t>0){sw+=n*t;sv+=n;}});
+    const uWar=sv>0?sw/sv:null;
+    const d=val-valP;
+    invHTML+=`<div class="rrow">
+      <div class="rrow-left"><span class="ttag tg-green">${UII_LABELS[u]||u}</span>
+      <div class="rmid">${fmtTn(val)}</div>
+      <div class="rspread">${fmtBn(val)} MM${uWar!=null?' · '+fmtPct(uWar):''}</div></div>
+      <span class="rdelta ${dClass(d)}">${pd?dStr(d):'—'}</span>
+    </div>`;
+  });
+  $('list-inv').innerHTML=invHTML||'<div class="mat-empty">No invested positions</div>';
+
+  // Correspondent banks card
+  let bkHTML='';
+  UII_BK.forEach(u=>{
+    const rows=day[u]||[];
+    const rowsP=dayP[u]||[];
+    if(!rows.length) return;
+    const val=rows.reduce((a,r)=>a+(r.n||0),0);
+    const valP=rowsP.reduce((a,r)=>a+(r.n||0),0);
+    const rate=rows[0]?.t||null;
+    const d=val-valP;
+    bkHTML+=`<div class="rrow">
+      <div class="rrow-left"><span class="ttag tg-cyan">${UII_LABELS[u]||u}</span>
+      <div class="rmid">${fmtTn(val)}</div>
+      <div class="rspread">${fmtBn(val)} MM${rate!=null&&rate>0?' · '+fmtPct(rate):''}</div></div>
+      <span class="rdelta ${dClass(d)}">${pd?dStr(d):'—'}</span>
+    </div>`;
+  });
+  $('list-bk').innerHTML=bkHTML||'<div class="mat-empty">No data</div>';
+
+  // Maturity ladder
+  renderMaturityLadder(day);
+}
+
+// ── Maturity ladder ───────────────────────────────────────────────────────────
+function renderMaturityLadder(day){
+  const rows=(day['SIMULTANEAS']||[]).filter(r=>r.fc);
+
+  const empty1=`<tr><td colspan="4" class="mat-empty">No open Simultaneas</td></tr>`;
+  if(!rows.length){
+    $('mat-buckets').innerHTML=empty1;
+    $('mat-buckets-foot').innerHTML='';
+    $('mat-collateral').innerHTML=empty1;
+    $('mat-collateral-foot').innerHTML='';
+    $('mat-sub').textContent='No open positions';
+    $('col-sub').textContent='Sovereign bonds received as collateral';
+    return;
+  }
+
+  const totalNom=rows.reduce((s,r)=>s+(r.n||0),0);
+  $('mat-sub').textContent=
+    `${rows.length} position${rows.length!==1?'s':''} · Total: ${fmtTn(totalNom)} MM COP`;
+
+  // ── Table 1: Maturity buckets ──────────────────────────────────────────────
+  const BUCKETS=[
+    {label:'Today',       color:'var(--red)',   test:d=>d<=0},
+    {label:'1 – 7 days',  color:'var(--amber)', test:d=>d>=1&&d<=7},
+    {label:'8 – 15 days', color:'#f0c060',      test:d=>d>=8&&d<=15},
+    {label:'16 – 30 days',color:'var(--green)', test:d=>d>=16&&d<=30},
+    {label:'> 30 days',   color:'var(--lp)',    test:d=>d>30},
+  ];
+
+  const bktData=BUCKETS.map(b=>({...b, count:0, nom:0}));
+  rows.forEach(r=>{
+    const days=daysUntil(r.fc);
+    const bucket=bktData.find(b=>b.test(days));
+    if(bucket){ bucket.count++; bucket.nom+=r.n||0; }
+  });
+
+  let bHTML='';
+  bktData.forEach(b=>{
+    if(b.count===0) return;
+    const pct=(b.nom/totalNom*100).toFixed(1);
+    bHTML+=`<tr>
+      <td><span class="days-tag" style="background:rgba(0,0,0,.2);border:1px solid ${b.color};color:${b.color}">${b.label}</span></td>
+      <td style="text-align:right;color:var(--muted)">${b.count}</td>
+      <td style="text-align:right;font-weight:600">${fmtTn(b.nom)} MM</td>
+      <td style="text-align:right;color:var(--muted)">${pct}%</td>
+    </tr>`;
+  });
+  $('mat-buckets').innerHTML=bHTML||empty1;
+  $('mat-buckets-foot').innerHTML=`<tr style="border-top:1px solid var(--uv-border)">
+    <td style="font-weight:700;color:var(--off-white);padding:7px 8px">Total</td>
+    <td style="text-align:right;font-weight:700;padding:7px 8px">${rows.length}</td>
+    <td style="text-align:right;font-weight:700;color:var(--amber);padding:7px 8px">${fmtTn(totalNom)} MM</td>
+    <td style="text-align:right;padding:7px 8px;color:var(--muted)">100%</td>
+  </tr>`;
+
+  // ── Table 2: Collateral by bond reference ──────────────────────────────────
+  const bondMap={};
+  rows.forEach(r=>{
+    const bond=r.b||'Unknown';
+    if(!bondMap[bond]) bondMap[bond]={count:0,nom:0};
+    bondMap[bond].count++;
+    bondMap[bond].nom+=r.n||0;
+  });
+
+  // Sort by nominal descending
+  const bondEntries=Object.entries(bondMap).sort((a,b)=>b[1].nom-a[1].nom);
+
+  let cHTML='';
+  bondEntries.forEach(([bond,data])=>{
+    const pct=(data.nom/totalNom*100).toFixed(1);
+    cHTML+=`<tr>
+      <td><span class="bond-tag">${bond}</span></td>
+      <td style="text-align:right;color:var(--muted)">${data.count}</td>
+      <td style="text-align:right;font-weight:600">${fmtTn(data.nom)} MM</td>
+      <td style="text-align:right;color:var(--muted)">${pct}%</td>
+    </tr>`;
+  });
+  $('mat-collateral').innerHTML=cHTML||empty1;
+  $('mat-collateral-foot').innerHTML=`<tr style="border-top:1px solid var(--uv-border)">
+    <td style="font-weight:700;color:var(--off-white);padding:7px 8px">Total</td>
+    <td style="text-align:right;font-weight:700;padding:7px 8px">${rows.length}</td>
+    <td style="text-align:right;font-weight:700;color:var(--amber);padding:7px 8px">${fmtTn(totalNom)} MM</td>
+    <td style="text-align:right;padding:7px 8px;color:var(--muted)">100%</td>
+  </tr>`;
+}
+
+// ── Charts ────────────────────────────────────────────────────────────────────
+function renderCharts(){
+  renderLiqChart();
+  renderRateChart();
+}
+
+function renderLiqChart(){
+  const hist=sliceBy(D.hist, activeRngLiq);
+  if(cLiq) cLiq.destroy();
+  cLiq=new Chart($('c-liq').getContext('2d'),{
+    type:'line',
+    data:{
+      labels:hist.map(r=>r.date),
+      datasets:[
+        {label:'Central Bank',data:hist.map(r=>r.cb/1e9),
+         borderColor:'#AA68FF',backgroundColor:'rgba(170,104,255,.12)',
+         borderWidth:2,pointRadius:0,tension:.3,fill:true,order:3},
+        {label:'Invested',data:hist.map(r=>r.inv/1e9),
+         borderColor:'#27c97a',backgroundColor:'rgba(39,201,122,.10)',
+         borderWidth:2,pointRadius:0,tension:.3,fill:true,order:2},
+        {label:'Corresp. Banks',data:hist.map(r=>r.bk/1e9),
+         borderColor:'#38bdf8',backgroundColor:'rgba(56,189,248,.08)',
+         borderWidth:2,pointRadius:0,tension:.3,fill:true,order:1},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,animation:{duration:300},
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:'#3d1878',borderColor:'#5a2ca0',borderWidth:1,
+          titleColor:'#9f7fcc',bodyColor:'#F4F4F4',
+          titleFont:{family:"'JetBrains Mono',monospace",size:10},
+          bodyFont:{family:"'JetBrains Mono',monospace",size:11},
+          callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} MM COP`}}
+      },
+      scales:{
+        x:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:9},maxTicksLimit:8,maxRotation:0},
+           grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}},
+        y:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(0)+' MM'},
+           grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}}
+      }
+    }
+  });
+}
+
+function renderRateChart(){
+  const hist=sliceBy(D.hist, activeRngRate).filter(r=>r.waRate!=null);
+  if(cRate) cRate.destroy();
+  cRate=new Chart($('c-rate').getContext('2d'),{
+    type:'line',
+    data:{
+      labels:hist.map(r=>r.date),
+      datasets:[{
+        label:'Wtd. Avg. Rate',data:hist.map(r=>r.waRate),
+        borderColor:'#27c97a',backgroundColor:'rgba(39,201,122,.10)',
+        borderWidth:2,pointRadius:0,tension:.3,fill:true
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,animation:{duration:300},
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:'#3d1878',borderColor:'#5a2ca0',borderWidth:1,
+          titleColor:'#9f7fcc',bodyColor:'#F4F4F4',
+          titleFont:{family:"'JetBrains Mono',monospace",size:10},
+          bodyFont:{family:"'JetBrains Mono',monospace",size:11},
+          callbacks:{label:ctx=>` Wtd. Rate: ${ctx.parsed.y.toFixed(2)}%`}}
+      },
+      scales:{
+        x:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:9},maxTicksLimit:8,maxRotation:0},
+           grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}},
+        y:{ticks:{color:'#7a4ccc',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(1)+'%'},
+           grid:{color:'rgba(90,44,160,.3)'},border:{color:'rgba(90,44,160,.4)'}}
+      }
+    }
+  });
+}
+
+// ── Range pills ───────────────────────────────────────────────────────────────
+function buildRangePills(){
+  function makePills(containerId, activeVar, setter){
+    $(containerId).innerHTML='';
+    RANGES.forEach(r=>{
+      const b=document.createElement('button');
+      b.className='rpill'+(r.label===activeVar?' on':'');
+      b.textContent=r.label;
+      b.onclick=()=>{
+        setter(r.label);
+        $(containerId).querySelectorAll('.rpill').forEach(x=>x.classList.toggle('on',x.textContent===r.label));
+      };
+      $(containerId).appendChild(b);
+    });
+  }
+  makePills('range-liq',  activeRngLiq,  v=>{ activeRngLiq=v;  show('spin-liq');  setTimeout(()=>{renderLiqChart();  hide('spin-liq'); },60); });
+  makePills('range-rate', activeRngRate, v=>{ activeRngRate=v; show('spin-rate'); setTimeout(()=>{renderRateChart(); hide('spin-rate');},60); });
+}
+
+
+// ── Encaje ────────────────────────────────────────────────────────────────────
+function renderEncaje(selectedDate){
+  // Find the disponible period that contains selectedDate, or the latest past one
+  let p = ENCAJE_DATA.find(p => selectedDate >= p.disp_start && selectedDate <= p.disp_end);
+  if(!p) p = [...ENCAJE_DATA].reverse().find(p => selectedDate > p.disp_end);
+  if(!p) p = ENCAJE_DATA[ENCAJE_DATA.length-1];
+
+  $('enc-period-label').textContent =
+    `Disponible: ${p.disp_start} → ${p.disp_end}  ·  Measured: ${p.req_start} → ${p.req_end}`;
+
+  const req = p.required;
+  const avg = p.avg_cb;
+  const exc = p.excess;
+  const ok  = p.compliant;
+  const days = Object.keys(p.daily).length;
+  const isOngoing = days < 14 && !ok;
+
+  // Status
+  const statusEl = $('enc-status');
+  const dotEl    = $('enc-dot');
+  const textEl   = $('enc-status-text');
+  statusEl.className = 'enc-status ' + (ok?'ok':'warn');
+  dotEl.className    = 'enc-dot '    + (ok?'ok':'warn');
+  textEl.className   = 'enc-status-text ' + (ok?'ok':'warn');
+  textEl.textContent = ok ? '✓ COMPLIANT' : isOngoing ? '⏳ IN PROGRESS' : '✗ BREACH';
+  $('enc-status-sub').textContent = `Coverage: ${(avg/req*100).toFixed(1)}% of required · ${days} day${days!==1?'s':''} in window`;
+
+  $('enc-req').textContent = fmtTn(req)+' MM';
+  $('enc-avg').textContent = fmtTn(avg)+' MM';
+  const excEl = $('enc-exc');
+  excEl.textContent = (exc>=0?'+':'')+fmtTn(exc)+' MM';
+  excEl.className = 'enc-m-val v-exc '+(exc>=0?'pos':'neg');
+
+  // Progress bar
+  const maxForBar = Math.max(avg, req);
+  const fillPct   = Math.min(100, (avg/maxForBar)*100);
+  const reqPct    = Math.min(100, (req/maxForBar)*100);
+  const fillEl = $('enc-prog-fill');
+  fillEl.style.width   = fillPct+'%';
+  fillEl.className     = 'enc-prog-fill '+(ok?'ok':'warn');
+  $('enc-req-marker').style.left = reqPct+'%';
+  $('enc-prog-pct').textContent  = (avg/req*100).toFixed(1)+'% of requirement';
+
+  // Daily bars
+  const dayEntries = Object.entries(p.daily).sort((a,b)=>a[0].localeCompare(b[0]));
+  const maxVal = Math.max(...dayEntries.map(d=>d[1]), req);
+  const reqH   = Math.round((req/maxVal)*52);
+
+  let barsHTML='', lblHTML='';
+  dayEntries.forEach(([d,val])=>{
+    const h   = Math.max(3, Math.round((val/maxVal)*52));
+    const cls = val>=req?'ok':'low';
+    const dd  = d.slice(8);
+    barsHTML += `<div class="enc-bar ${cls}" style="height:${h}px" title="${d}: ${fmtTn(val)} MM">
+      <div class="enc-req-line" style="bottom:${reqH}px"></div>
+    </div>`;
+    lblHTML  += `<div class="enc-day-lbl">${dd}</div>`;
+  });
+  $('enc-daily-bars').innerHTML   = barsHTML;
+  $('enc-daily-labels').innerHTML = lblHTML;
+
+  // History table
+  let rows='';
+  [...ENCAJE_DATA].reverse().forEach(p=>{
+    const n = Object.keys(p.daily).length;
+    if(!n) return;
+    const complete = n>=14;
+    const badge = p.compliant
+      ? '<span class="enc-badge ok">✓ OK</span>'
+      : complete
+        ? '<span class="enc-badge warn">✗ BREACH</span>'
+        : '<span class="enc-badge partial">⏳ Ongoing</span>';
+    const excSign = p.excess>=0?'+':'';
+    const excColor = p.excess>=0?'var(--green)':'var(--red)';
+    rows+=`<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)">${p.disp_start} → ${p.disp_end.slice(5)}</td>
+      <td style="color:var(--amber)">${fmtTn(p.required)} MM</td>
+      <td style="color:var(--lp)">${fmtTn(p.avg_cb)} MM</td>
+      <td style="color:${excColor}">${excSign}${fmtTn(p.excess)} MM</td>
+      <td>${badge}</td>
+    </tr>`;
+  });
+  $('enc-hist-body').innerHTML = rows;
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+Chart.defaults.color='#7a4ccc';
+Chart.defaults.borderColor='rgba(90,44,160,.4)';
+updateTs();
+loadData();
+</script>
+</body>
+</html>
