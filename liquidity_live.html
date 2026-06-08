@@ -25,7 +25,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--uv);color:var(--off-white);font-family:'Outfit',sans-serif;font-size:14px;min-height:100vh}
- 
+
 /* ── Header ── */
 header{display:flex;align-items:center;gap:13px;padding:13px 26px;
   background:rgba(42,16,81,.88);backdrop-filter:blur(12px);
@@ -46,7 +46,7 @@ header h1{font-size:16px;font-weight:700;letter-spacing:-.3px}
 .refresh-btn{background:transparent;border:1px solid var(--uv-border);color:var(--muted);
   padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'Outfit',sans-serif;transition:all .2s}
 .refresh-btn:hover{border-color:var(--lp);color:var(--lp)}
- 
+
 /* ── Layout ── */
 main{padding:22px 26px 40px;max-width:1440px}
 .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:6px}
@@ -60,7 +60,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .sub-section{margin-bottom:28px}
 .sub-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
   letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;padding-left:2px}
- 
+
 /* ── Loading / error states ── */
 .state-box{display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:12px;padding:56px 40px;border:1px solid var(--uv-border);border-radius:12px;
@@ -78,7 +78,7 @@ main{padding:22px 26px 40px;max-width:1440px}
   padding:7px 20px;border-radius:8px;cursor:pointer;font-size:13px;
   font-family:'Outfit',sans-serif;font-weight:600;transition:all .2s}
 .retry-btn:hover{background:rgba(170,104,255,.2)}
- 
+
 /* ── Date bar ── */
 .date-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   background:var(--uv-card);border:1px solid var(--uv-border);
@@ -103,7 +103,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .date-badge span{color:var(--lp);font-weight:600}
 .date-warn{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--red);
   background:rgba(240,80,80,.08);border:1px solid rgba(240,80,80,.2);padding:2px 8px;border-radius:4px}
- 
+
 /* ── KPI strip ── */
 .kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
 .kpi{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:12px;
@@ -123,7 +123,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .kpi-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim)}
 .kpi-delta{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
   padding:1px 6px;border-radius:4px;display:inline-block;margin-top:4px}
- 
+
 /* ── Cards ── */
 .card{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;
   padding:18px 18px 14px;position:relative;overflow:hidden}
@@ -139,7 +139,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .card.c-mat::after{background:radial-gradient(circle,rgba(240,160,80,.12) 0%,transparent 70%)}
 .card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);margin-bottom:2px}
 .card-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);margin-bottom:12px;line-height:1.5}
- 
+
 /* ── Rate rows ── */
 .rrow{display:flex;justify-content:space-between;align-items:center;gap:12px;
   padding:9px 0;border-bottom:1px solid rgba(90,44,160,.35)}
@@ -158,7 +158,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .dpos{color:var(--green);background:rgba(39,201,122,.1)}
 .dneg{color:var(--red);background:rgba(240,80,80,.1)}
 .dzero{color:var(--muted)}
- 
+
 /* ── Maturity ladder table ── */
 .mat-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:10px}
 .mat-table th{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
@@ -177,12 +177,12 @@ main{padding:22px 26px 40px;max-width:1440px}
 .days-mid{background:rgba(39,201,122,.08);border:1px solid rgba(39,201,122,.2);color:var(--green)}
 .days-far{background:rgba(90,44,160,.2);border:1px solid var(--uv-border);color:var(--muted)}
 .mat-empty{color:var(--muted);font-size:11px;padding:16px 0;text-align:center}
- 
+
 /* ── Bar mini-chart ── */
 .bar-wrap{display:flex;gap:3px;align-items:flex-end;height:40px;margin-top:8px}
 .bar-seg{flex:1;border-radius:3px 3px 0 0;min-height:3px;transition:opacity .2s}
 .bar-seg:hover{opacity:.75}
- 
+
 /* ── Chart panels ── */
 .panel{background:var(--uv-card);border:1px solid var(--uv-border);border-radius:14px;
   padding:18px 18px 14px;position:relative;overflow:hidden}
@@ -203,19 +203,19 @@ main{padding:22px 26px 40px;max-width:1440px}
   background:rgba(42,16,81,.85);border-radius:8px;z-index:10}
 .mspin{width:20px;height:20px;border:2px solid var(--uv-border);border-top-color:var(--lp);
   border-radius:50%;animation:spin .7s linear infinite}
- 
+
 /* ── Legend ── */
 .legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
 .leg-item{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
 .leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
- 
+
 /* ── WA rate badge ── */
 .wa-badge{display:flex;align-items:center;gap:8px;padding:8px 12px;
   background:rgba(39,201,122,.06);border:1px solid rgba(39,201,122,.2);border-radius:8px;margin-bottom:10px}
 .wa-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
 .wa-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--green);margin-left:auto}
- 
- 
+
+
 /* ── Encaje ── */
 .enc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .enc-status{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;margin-bottom:12px}
@@ -265,7 +265,7 @@ main{padding:22px 26px 40px;max-width:1440px}
 .enc-badge.ok{color:var(--green);background:rgba(39,201,122,.1);border:1px solid rgba(39,201,122,.2)}
 .enc-badge.warn{color:var(--red);background:rgba(240,80,80,.1);border:1px solid rgba(240,80,80,.2)}
 .enc-badge.partial{color:var(--amber);background:rgba(240,160,80,.1);border:1px solid rgba(240,160,80,.2)}
- 
+
 footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
   text-align:center;padding:20px 26px 14px;border-top:1px solid var(--uv-border);margin-top:8px}
 .hidden{display:none!important}
@@ -273,7 +273,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
 </style>
 </head>
 <body>
- 
+
 <header>
   <div class="nu">nu</div>
   <h1>Treasury's Market Data</h1>
@@ -286,21 +286,21 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
     <button class="refresh-btn" onclick="loadData(true)">↻ Refresh</button>
   </div>
 </header>
- 
+
 <main>
   <div class="sec-head">
     <span class="sec-num">SECTION 05</span>
     <h2>Liquidity Management</h2>
   </div>
   <div class="divider"></div>
- 
+
   <!-- Loading -->
   <div id="state-loading" class="state-box">
     <div class="spinner"></div>
     <span class="state-title">Loading Liquidity Data</span>
     <p class="state-sub" id="loading-msg">Connecting to Databricks…</p>
   </div>
- 
+
   <!-- Error -->
   <div id="state-error" class="state-box error-box hidden">
     <span style="font-size:26px">⚠️</span>
@@ -308,10 +308,10 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
     <pre id="error-detail" class="error-detail"></pre>
     <button class="retry-btn" onclick="loadData(true)">↻ Retry</button>
   </div>
- 
+
   <!-- Dashboard -->
   <div id="dashboard" class="hidden">
- 
+
     <!-- 01: Date selector -->
     <div class="sub-section">
       <div class="sub-label">01 &nbsp;—&nbsp; Date</div>
@@ -333,7 +333,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         <div class="date-badge">Showing: <span id="showing-date">—</span></div>
       </div>
     </div>
- 
+
     <!-- 02: KPI strip -->
     <div class="sub-section">
       <div class="sub-label">02 &nbsp;—&nbsp; Snapshot</div>
@@ -364,19 +364,19 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
         </div>
       </div>
     </div>
- 
+
     <!-- 03: Rate-run cards -->
     <div class="sub-section">
       <div class="sub-label">03 &nbsp;—&nbsp; Position Detail</div>
       <div class="three-col">
- 
+
         <!-- Central Bank -->
         <div class="card c-cb">
           <div class="card-title">🏦 Central Bank Accounts</div>
           <div class="card-sub" id="cb-sub">CUD · MOL</div>
           <div id="list-cb"></div>
         </div>
- 
+
         <!-- Invested liquidity -->
         <div class="card c-inv">
           <div class="card-title">💰 Invested Liquidity</div>
@@ -387,22 +387,22 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
           </div>
           <div id="list-inv"></div>
         </div>
- 
+
         <!-- Correspondent banks -->
         <div class="card c-bk">
           <div class="card-title">🌐 Correspondent Banks</div>
           <div class="card-sub" id="bk-sub">Citibank · JPMorgan · Santander</div>
           <div id="list-bk"></div>
         </div>
- 
+
       </div>
     </div>
- 
+
     <!-- 04: Maturity ladder -->
     <div class="sub-section">
       <div class="sub-label">04 &nbsp;—&nbsp; Simultaneas Maturity Ladder</div>
       <div class="two-col">
- 
+
         <!-- Table 1: Maturity buckets -->
         <div class="card c-mat">
           <div class="card-title">📅 Maturity Buckets</div>
@@ -420,7 +420,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             <tfoot id="mat-buckets-foot"></tfoot>
           </table>
         </div>
- 
+
         <!-- Table 2: Collateral by bond reference -->
         <div class="card c-mat">
           <div class="card-title">🏛️ Collateral by Bond Reference</div>
@@ -438,16 +438,16 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             <tfoot id="mat-collateral-foot"></tfoot>
           </table>
         </div>
- 
+
       </div>
     </div>
- 
- 
+
+
     <!-- 05: Encaje (Legal Reserve) -->
     <div class="sub-section">
       <div class="sub-label">05 &nbsp;—&nbsp; Encaje · Legal Reserve</div>
       <div class="enc-grid">
- 
+
         <div class="card c-cb">
           <div class="card-title">🏛️ Current Period · Compliance</div>
           <div class="card-sub" id="enc-period-label">—</div>
@@ -492,7 +492,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             <div class="enc-daily-labels" id="enc-daily-labels"></div>
           </div>
         </div>
- 
+
         <div class="card c-cb">
           <div class="card-title">📋 Compliance History · All Periods</div>
           <div class="card-sub">Disponible window · Average CUD+MOL vs Required</div>
@@ -511,15 +511,15 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             </table>
           </div>
         </div>
- 
+
       </div>
     </div>
- 
+
     <!-- 06 + 07: Historical charts -->
     <div class="sub-section">
       <div class="sub-label">06 · 07 &nbsp;—&nbsp; Historical Charts</div>
       <div class="two-col">
- 
+
         <div class="panel">
           <div class="panel-head">
             <div>
@@ -540,7 +540,7 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             <canvas id="c-liq"></canvas>
           </div>
         </div>
- 
+
         <div class="panel">
           <div class="panel-head">
             <div>
@@ -556,54 +556,54 @@ footer{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);
             <canvas id="c-rate"></canvas>
           </div>
         </div>
- 
+
       </div>
     </div>
- 
+
   </div><!-- /dashboard -->
 </main>
- 
+
 <footer>Nubank · Colombia Treasury ALM · @col_treasury_alm · v_portfolio_completo</footer>
- 
+
 <script>
- 
+
 // ── Constants ─────────────────────────────────────────────────────────────────
 const RANGES = [{label:'1M',days:30},{label:'3M',days:90},{label:'6M',days:180},{label:'1Y',days:365},{label:'ALL',days:null}];
- 
+
 const UII_CB  = ['CUD','MOL'];
 const UII_INV = ['SIMULTANEAS','DEPOSITO REMUNERADO'];
 const UII_BK  = ['CITIBANK','JPM','SANTANDER'];
- 
+
 const UII_LABELS = {
   'CUD':'CUD', 'MOL':'MOL',
   'SIMULTANEAS':'Simultaneas', 'DEPOSITO REMUNERADO':'Dep. Remunerado',
   'CITIBANK':'Citibank', 'JPM':'JPMorgan', 'SANTANDER':'Santander',
 };
- 
+
 // ── App state ─────────────────────────────────────────────────────────────────
 let D            = null;
 let selectedDate = null;
 let activeRngLiq = '3M', activeRngRate = '3M';
 let cLiq = null, cRate = null;
- 
- 
+
+
 // ╔══════════════════════════════════════════════════════════════════════════╗
 // ║  Paste your Apps Script deployment URL here                             ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyFhEh77bRMWpRCN7r5lWdlyYibYU6dqEKVTZL8j8gmjpk7WwxOarmSuX8glJANMfu0/exec';
- 
- 
+
+
 async function loadData(forceRefresh = false) {
   hide('state-error');
   hide('dashboard');
   show('state-loading');
   $('loading-msg').textContent = 'Connecting to Databricks…';
- 
+
   try {
     const suffix     = forceRefresh ? '&nocache=' + Date.now() : '';
     const controller = new AbortController();
     const timer      = setTimeout(() => controller.abort(), 55000);
- 
+
     let res;
     try {
       res = await fetch(APPS_SCRIPT_URL + '?dataset=liquidity' + suffix, { signal: controller.signal });
@@ -614,15 +614,15 @@ async function loadData(forceRefresh = false) {
     } finally {
       clearTimeout(timer);
     }
- 
+
     $('loading-msg').textContent = 'Processing data…';
     const text = await res.text();
     let json;
     try { json = JSON.parse(text); }
     catch(e) { throw new Error('Apps Script returned non-JSON:\n' + text.slice(0, 300)); }
- 
+
     if (json.status !== 'ok') throw new Error(json.message || JSON.stringify(json));
- 
+
     // Build D from live response — same shape as static
     D = {
       availDates: json.dates,
@@ -631,18 +631,18 @@ async function loadData(forceRefresh = false) {
       byDate:     json.snapshots,
       hist:       json.hist,
     };
- 
+
     const badge = $('cache-badge');
     badge.className = 'cache-badge ' + (json.cached ? 'badge-cached' : 'badge-live');
     badge.textContent = json.cached ? '◌ cached' : '⬤ live';
     show('cache-badge');
- 
+
     hide('state-loading');
     show('dashboard');
     buildRangePills();
     setDate(D.latestDate);
     renderCharts();
- 
+
   } catch(err) {
     console.error(err);
     hide('state-loading');
@@ -650,7 +650,7 @@ async function loadData(forceRefresh = false) {
     show('state-error');
   }
 }
- 
+
 // data shape: byDate[d][uii] = [{n,t,v,b,fc}]
 function sumNominal(dayObj, uiis){
   return uiis.reduce((s,u)=>{
@@ -666,23 +666,23 @@ function computeWA(dayObj, uiis){
   });
   return sv>0?sw/sv:null;
 }
- 
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const $    = id => document.getElementById(id);
 const show = id => $(id).classList.remove('hidden');
 const hide = id => $(id).classList.add('hidden');
- 
+
 function fmtTn(v){ return (v/1e9).toFixed(1)+' MM'; }
 function fmtBn(v){ return Math.round(v/1e9).toLocaleString('en-CO')+' MM'; }
 function fmtPct(v){ return v.toFixed(2)+'%'; }
- 
+
 function dClass(d){ return d>500e6?'dpos':d<-500e6?'dneg':'dzero'; }
 function dStr(v){
   if(Math.abs(v)<500e6) return '±0';
   const sign=v>0?'+':'';
   return sign+fmtBn(v)+' MM';
 }
- 
+
 function prevD(d){ const i=D.availDates.indexOf(d); return i>0?D.availDates[i-1]:null; }
 function nextD(d){ const i=D.availDates.indexOf(d); return i<D.availDates.length-1?D.availDates[i+1]:null; }
 function nearestAvail(ds){
@@ -734,18 +734,18 @@ function parseDate(raw){
   }
   return raw;
 }
- 
- 
- 
- 
- 
+
+
+
+
+
 function sumNominal(dayObj, uiis){
   return uiis.reduce((s,u)=>{
     const rows=dayObj[u]||[];
     return s+rows.reduce((a,r)=>a+(r.n||0),0);
   },0);
 }
- 
+
 function computeWA(dayObj, uiis){
   let sumW=0, sumV=0;
   uiis.forEach(u=>{
@@ -757,7 +757,7 @@ function computeWA(dayObj, uiis){
   });
   return sumV>0?sumW/sumV:null;
 }
- 
+
 // ── Date selector ─────────────────────────────────────────────────────────────
 function setDate(ds, skipPicker){
   const resolved=nearestAvail(ds);
@@ -771,19 +771,18 @@ function setDate(ds, skipPicker){
   $('date-picker').min=D.availDates[0];
   $('date-picker').max=D.latestDate;
   renderSnapshot(resolved);
-  renderEncaje(resolved);
 }
 $('date-picker').addEventListener('change',e=>setDate(e.target.value,true));
 $('btn-prev').onclick   =()=>{const d=prevD(selectedDate);if(d)setDate(d);};
 $('btn-next').onclick   =()=>{const d=nextD(selectedDate);if(d)setDate(d);};
 $('btn-latest').onclick =()=>setDate(D.latestDate);
- 
+
 // ── Render snapshot (KPIs + cards + maturity ladder) ─────────────────────────
 function renderSnapshot(date){
   const pd = prevD(date);
   const day = D.byDate[date]||{};
   const dayP = pd?(D.byDate[pd]||{}):{};
- 
+
   const cb   = sumNominal(day,  UII_CB);
   const inv  = sumNominal(day,  UII_INV);
   const bk   = sumNominal(day,  UII_BK);
@@ -792,13 +791,13 @@ function renderSnapshot(date){
   const invP = sumNominal(dayP, UII_INV);
   const bkP  = sumNominal(dayP, UII_BK);
   const totP = cbP+invP+bkP;
- 
+
   // KPIs
   $('kpi-cb').textContent  = fmtTn(cb);
   $('kpi-inv').textContent = fmtTn(inv);
   $('kpi-bk').textContent  = fmtTn(bk);
   $('kpi-tot').textContent = fmtTn(tot);
- 
+
   function setDelta(elId, curr, prev){
     const el=$(elId); const d=curr-prev;
     el.textContent = pd ? (dStr(d)+' vs prev') : '—';
@@ -808,12 +807,12 @@ function renderSnapshot(date){
   setDelta('kpi-inv-d', inv, invP);
   setDelta('kpi-bk-d',  bk,  bkP);
   setDelta('kpi-tot-d', tot, totP);
- 
+
   // Subtitle
   $('cb-sub').textContent  = date+(pd?' · Δ vs '+pd:'');
   $('inv-sub').textContent = date+(pd?' · Δ vs '+pd:'');
   $('bk-sub').textContent  = date+(pd?' · Δ vs '+pd:'');
- 
+
   // Central bank card
   let cbHTML='';
   UII_CB.forEach(u=>{
@@ -830,14 +829,14 @@ function renderSnapshot(date){
     </div>`;
   });
   $('list-cb').innerHTML=cbHTML||'<div class="mat-empty">No data</div>';
- 
+
   // Invested card
   const waRate=computeWA(day,UII_INV);
   if(waRate!=null){
     $('wa-inv-val').textContent=fmtPct(waRate);
     show('wa-inv');
   } else { hide('wa-inv'); }
- 
+
   let invHTML='';
   UII_INV.forEach(u=>{
     const rows=day[u]||[];
@@ -857,7 +856,7 @@ function renderSnapshot(date){
     </div>`;
   });
   $('list-inv').innerHTML=invHTML||'<div class="mat-empty">No invested positions</div>';
- 
+
   // Correspondent banks card
   let bkHTML='';
   UII_BK.forEach(u=>{
@@ -876,15 +875,15 @@ function renderSnapshot(date){
     </div>`;
   });
   $('list-bk').innerHTML=bkHTML||'<div class="mat-empty">No data</div>';
- 
+
   // Maturity ladder
   renderMaturityLadder(day);
 }
- 
+
 // ── Maturity ladder ───────────────────────────────────────────────────────────
 function renderMaturityLadder(day){
   const rows=(day['SIMULTANEAS']||[]).filter(r=>r.fc);
- 
+
   const empty1=`<tr><td colspan="4" class="mat-empty">No open Simultaneas</td></tr>`;
   if(!rows.length){
     $('mat-buckets').innerHTML=empty1;
@@ -895,11 +894,11 @@ function renderMaturityLadder(day){
     $('col-sub').textContent='Sovereign bonds received as collateral';
     return;
   }
- 
+
   const totalNom=rows.reduce((s,r)=>s+(r.n||0),0);
   $('mat-sub').textContent=
     `${rows.length} position${rows.length!==1?'s':''} · Total: ${fmtTn(totalNom)} MM COP`;
- 
+
   // ── Table 1: Maturity buckets ──────────────────────────────────────────────
   const BUCKETS=[
     {label:'Today',       color:'var(--red)',   test:d=>d<=0},
@@ -908,14 +907,14 @@ function renderMaturityLadder(day){
     {label:'16 – 30 days',color:'var(--green)', test:d=>d>=16&&d<=30},
     {label:'> 30 days',   color:'var(--lp)',    test:d=>d>30},
   ];
- 
+
   const bktData=BUCKETS.map(b=>({...b, count:0, nom:0}));
   rows.forEach(r=>{
     const days=daysUntil(r.fc);
     const bucket=bktData.find(b=>b.test(days));
     if(bucket){ bucket.count++; bucket.nom+=r.n||0; }
   });
- 
+
   let bHTML='';
   bktData.forEach(b=>{
     if(b.count===0) return;
@@ -934,7 +933,7 @@ function renderMaturityLadder(day){
     <td style="text-align:right;font-weight:700;color:var(--amber);padding:7px 8px">${fmtTn(totalNom)} MM</td>
     <td style="text-align:right;padding:7px 8px;color:var(--muted)">100%</td>
   </tr>`;
- 
+
   // ── Table 2: Collateral by bond reference ──────────────────────────────────
   const bondMap={};
   rows.forEach(r=>{
@@ -943,10 +942,10 @@ function renderMaturityLadder(day){
     bondMap[bond].count++;
     bondMap[bond].nom+=r.n||0;
   });
- 
+
   // Sort by nominal descending
   const bondEntries=Object.entries(bondMap).sort((a,b)=>b[1].nom-a[1].nom);
- 
+
   let cHTML='';
   bondEntries.forEach(([bond,data])=>{
     const pct=(data.nom/totalNom*100).toFixed(1);
@@ -965,13 +964,13 @@ function renderMaturityLadder(day){
     <td style="text-align:right;padding:7px 8px;color:var(--muted)">100%</td>
   </tr>`;
 }
- 
+
 // ── Charts ────────────────────────────────────────────────────────────────────
 function renderCharts(){
   renderLiqChart();
   renderRateChart();
 }
- 
+
 function renderLiqChart(){
   const hist=sliceBy(D.hist, activeRngLiq);
   if(cLiq) cLiq.destroy();
@@ -1011,7 +1010,7 @@ function renderLiqChart(){
     }
   });
 }
- 
+
 function renderRateChart(){
   const hist=sliceBy(D.hist, activeRngRate).filter(r=>r.waRate!=null);
   if(cRate) cRate.destroy();
@@ -1045,7 +1044,7 @@ function renderRateChart(){
     }
   });
 }
- 
+
 // ── Range pills ───────────────────────────────────────────────────────────────
 function buildRangePills(){
   function makePills(containerId, activeVar, setter){
@@ -1064,93 +1063,8 @@ function buildRangePills(){
   makePills('range-liq',  activeRngLiq,  v=>{ activeRngLiq=v;  show('spin-liq');  setTimeout(()=>{renderLiqChart();  hide('spin-liq'); },60); });
   makePills('range-rate', activeRngRate, v=>{ activeRngRate=v; show('spin-rate'); setTimeout(()=>{renderRateChart(); hide('spin-rate');},60); });
 }
- 
- 
-// ── Encaje ────────────────────────────────────────────────────────────────────
-function renderEncaje(selectedDate){
-  // Find the disponible period that contains selectedDate, or the latest past one
-  let p = ENCAJE_DATA.find(p => selectedDate >= p.disp_start && selectedDate <= p.disp_end);
-  if(!p) p = [...ENCAJE_DATA].reverse().find(p => selectedDate > p.disp_end);
-  if(!p) p = ENCAJE_DATA[ENCAJE_DATA.length-1];
- 
-  $('enc-period-label').textContent =
-    `Disponible: ${p.disp_start} → ${p.disp_end}  ·  Measured: ${p.req_start} → ${p.req_end}`;
- 
-  const req = p.required;
-  const avg = p.avg_cb;
-  const exc = p.excess;
-  const ok  = p.compliant;
-  const days = Object.keys(p.daily).length;
-  const isOngoing = days < 14 && !ok;
- 
-  // Status
-  const statusEl = $('enc-status');
-  const dotEl    = $('enc-dot');
-  const textEl   = $('enc-status-text');
-  statusEl.className = 'enc-status ' + (ok?'ok':'warn');
-  dotEl.className    = 'enc-dot '    + (ok?'ok':'warn');
-  textEl.className   = 'enc-status-text ' + (ok?'ok':'warn');
-  textEl.textContent = ok ? '✓ COMPLIANT' : isOngoing ? '⏳ IN PROGRESS' : '✗ BREACH';
-  $('enc-status-sub').textContent = `Coverage: ${(avg/req*100).toFixed(1)}% of required · ${days} day${days!==1?'s':''} in window`;
- 
-  $('enc-req').textContent = fmtTn(req)+' MM';
-  $('enc-avg').textContent = fmtTn(avg)+' MM';
-  const excEl = $('enc-exc');
-  excEl.textContent = (exc>=0?'+':'')+fmtTn(exc)+' MM';
-  excEl.className = 'enc-m-val v-exc '+(exc>=0?'pos':'neg');
- 
-  // Progress bar
-  const maxForBar = Math.max(avg, req);
-  const fillPct   = Math.min(100, (avg/maxForBar)*100);
-  const reqPct    = Math.min(100, (req/maxForBar)*100);
-  const fillEl = $('enc-prog-fill');
-  fillEl.style.width   = fillPct+'%';
-  fillEl.className     = 'enc-prog-fill '+(ok?'ok':'warn');
-  $('enc-req-marker').style.left = reqPct+'%';
-  $('enc-prog-pct').textContent  = (avg/req*100).toFixed(1)+'% of requirement';
- 
-  // Daily bars
-  const dayEntries = Object.entries(p.daily).sort((a,b)=>a[0].localeCompare(b[0]));
-  const maxVal = Math.max(...dayEntries.map(d=>d[1]), req);
-  const reqH   = Math.round((req/maxVal)*52);
- 
-  let barsHTML='', lblHTML='';
-  dayEntries.forEach(([d,val])=>{
-    const h   = Math.max(3, Math.round((val/maxVal)*52));
-    const cls = val>=req?'ok':'low';
-    const dd  = d.slice(8);
-    barsHTML += `<div class="enc-bar ${cls}" style="height:${h}px" title="${d}: ${fmtTn(val)} MM">
-      <div class="enc-req-line" style="bottom:${reqH}px"></div>
-    </div>`;
-    lblHTML  += `<div class="enc-day-lbl">${dd}</div>`;
-  });
-  $('enc-daily-bars').innerHTML   = barsHTML;
-  $('enc-daily-labels').innerHTML = lblHTML;
- 
-  // History table
-  let rows='';
-  [...ENCAJE_DATA].reverse().forEach(p=>{
-    const n = Object.keys(p.daily).length;
-    if(!n) return;
-    const complete = n>=14;
-    const badge = p.compliant
-      ? '<span class="enc-badge ok">✓ OK</span>'
-      : complete
-        ? '<span class="enc-badge warn">✗ BREACH</span>'
-        : '<span class="enc-badge partial">⏳ Ongoing</span>';
-    const excSign = p.excess>=0?'+':'';
-    const excColor = p.excess>=0?'var(--green)':'var(--red)';
-    rows+=`<tr>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)">${p.disp_start} → ${p.disp_end.slice(5)}</td>
-      <td style="color:var(--amber)">${fmtTn(p.required)} MM</td>
-      <td style="color:var(--lp)">${fmtTn(p.avg_cb)} MM</td>
-      <td style="color:${excColor}">${excSign}${fmtTn(p.excess)} MM</td>
-      <td>${badge}</td>
-    </tr>`;
-  });
-  $('enc-hist-body').innerHTML = rows;
-}
- 
+
+
 // ── Boot ──────────────────────────────────────────────────────────────────────
 Chart.defaults.color='#7a4ccc';
 Chart.defaults.borderColor='rgba(90,44,160,.4)';
